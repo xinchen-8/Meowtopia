@@ -1,149 +1,251 @@
 :root {
-    --primary: #4A90E2;
-    --secondary: #6c757d;
-    --success: #28a745;
-    --background: #f8f9fa;
-    --text: #333;
+    --primary: #ff8c1a;
+    --primary-dark: #ff6600;
+    --text-light: #FFE4B5;
+    --background: #fff5e6;
 }
 
+/* 重置所有元素的預設樣式 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* 網站基礎樣式設定 */
 body {
-    font-family: 'Microsoft JhengHei', sans-serif;
-    line-height: 1.6;
-    background: var(--background);
+    font-family: "Microsoft JhengHei", Arial, sans-serif;
+    background-color: var(--background);
+    min-height: 100vh;
 }
 
-.navbar {
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
+/* 頂部導航欄樣式 */
+.header {
+    background-color: var(--primary);
+    padding: 0.8rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
-.nav-links a {
-    color: var(--text);
+/* 網站 Logo 樣式 */
+.logo {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: none;  /* 去掉下劃線 */
+    transition: transform 0.3s;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+/* 首頁登入/註冊按鈕區域樣式 */
+.auth-buttons {
+    display: flex;
+    gap: 1.2rem;
+}
+
+.auth-buttons a {
     text-decoration: none;
-    margin-left: 1.5rem;
-    transition: color 0.3s;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: 2px solid white;
+    border-radius: 25px;
+    transition: all 0.3s;
+    font-weight: 500;
 }
 
-.nav-links a:hover {
+.auth-buttons a:hover {
+    background: white;
     color: var(--primary);
 }
 
+/* Hero 區域樣式 - 網站主要視覺焦點 */
 .hero {
-    height: 60vh;
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/static/images/hero-bg.jpg');
-    background-size: cover;
-    background-position: center;
+    height: 100vh;
+    background: linear-gradient(rgba(255,140,26,0.3), rgba(255,140,26,0.3)),
+                url("images/cat.jpg") center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: white;
-    margin-top: 60px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
     padding: 2rem;
 }
 
-.cats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 2rem 0;
-}
-
-.cat-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
-}
-
-.cat-card:hover {
-    transform: translateY(-5px);
-}
-
-.card-image {
-    position: relative;
-    height: 200px;
-}
-
-.card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.status-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: var(--success);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-}
-
-.card-content {
-    padding: 1.5rem;
-}
-
-.cat-tags {
-    display: flex;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
-}
-
-.tag {
-    background: #e9ecef;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-}
-
-.btn-primary {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--primary);
-    color: white;
+/* Hero 內容區塊樣式 */
+.hero-content {
+    background: rgba(0,0,0,0.5);
+    padding: 2.5rem;
+    border-radius: 15px;
+    max-width: 600px;
     text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+/* 主標題樣式 */
+.hero-content h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+}
+
+/* 副標題樣式 */
+.hero-content p {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    margin-bottom: 2rem;
+    color: white;
+    line-height: 1.6;
+}
+
+/* 行動召喚按鈕樣式 */
+.cta-button {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 30px;
     text-decoration: none;
-    border-radius: 5px;
-    margin-top: 1rem;
-    transition: background 0.3s;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    font-weight: bold;
 }
 
-.btn-primary:hover {
-    background: #357ABD;
+.cta-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.footer {
+/* 右下角吉祥物圖示樣式 */
+.mascot {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.mascot:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+
+    .auth-buttons a {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .mascot {
+        width: 80px;
+        height: 80px;
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+}
+
+/* 分頁切換樣式 */
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px; /* 根據需要調整 */
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e0e0e0;
+    position: relative; /* 確保可以應用 z-index */
+    z-index: 999; /* 使 .tabs 在 header 下方 */
+}
+
+.tab-content {
+    display: none; /* 預設隱藏所有表單 */
+}
+
+.tab-content.active {
+    display: block; /* 只有加上 active 樣式時才顯示 */
+}
+.tab-button {
+    padding: 12px 24px;
+    font-size: 1.1em;
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    margin: 0 10px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.tab-button:hover {
+    color: #ff8c1a;
+}
+
+.tab-button.active {
+    color: #ff8c1a;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ff8c1a;
+}
+
+/* 表單樣式 */
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
     background: white;
-    padding: 2rem 0;
-    text-align: center;
-    margin-top: 3rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.submit-btn {
+    background-color: #ff8c1a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1em;
+}
+
+.submit-btn:hover {
+    background-color: #ff6600;
 }

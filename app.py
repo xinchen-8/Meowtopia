@@ -69,32 +69,31 @@ class Adoption(db.Model):
 def home():
     return render_template('index.html')
 
-# 登入
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
+# 登入和註冊
+@app.route('/login_signUp', methods=['GET', 'POST'])
+def login_signUp():
+    tab = request.args.get('tab', 'login')  # 默認顯示登入表單
+
+    if tab == 'login' and request.method == 'POST':
+        # 登入邏輯
         user = User.query.filter_by(username=request.form['username']).first()
         if user and user.check_password(request.form['password']):
             login_user(user)
             return redirect(url_for('dashboard'))
-        flash('Invalid username or password')
-    return render_template('login.html')
+        flash('無效的用戶名或密碼')
 
-# 註冊
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
+    elif tab == 'signup' and request.method == 'POST':
+        # 註冊邏輯
         user = User(
             username=request.form['username'],
-            age=request.form['age'],
-            gender=request.form['gender'],
             contact=request.form['contact']
         )
         user.set_password(request.form['password'])
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('register.html')
+        return redirect(url_for('login_signUp', tab='login'))
+
+    return render_template('login_signUp.html', tab=tab)
 
 # 登出路由
 @app.route('/logout')

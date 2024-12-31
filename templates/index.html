@@ -1,18 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>貓咪領養系統</title>
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <title>喵托邦 - 貓咪領養平台</title>
 </head>
 <body>
-    <a class="nav-link" href="/login">Sign in</a>
-    <a class="nav-link" href="/register">Register</a>
-    <div class="container">
-        <h1>貓咪領養中心</h1>
-            
+    <header class="header">
+        <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+        <nav class="auth-buttons">
+            <a href="{{ url_for('login_signUp', tab='login') }}">登入</a>
+            <a href="{{ url_for('login_signUp', tab='signup') }}">註冊</a>
+        </nav>
+    </header>
+    
+    <main class="hero">
+        <div class="hero-content">
+            <h1>為浪貓找一個溫暖的家</h1>
+            <p>瀏覽來自全台各地的領養資訊，給予流浪貓咪一個機會</p>
+            <button class="cta-button" onclick="">立即領養</button>
+        </div>
+    </main>
+    
+    <div class="mascot">
+        <img src="{{ url_for('static', filename='images/mascot.png') }}" alt="喵托邦吉祥物" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
 </body>
 </html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>登入 / 註冊</title>
+    <script>
+        function showTab(tabId) {
+            // 隱藏所有內容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 移除所有按鈕的 active 樣式
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // 顯示選中的內容
+            document.getElementById(tabId).classList.add('active');
+
+            // 為目標按鈕添加 active 樣式
+            event.target.classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+    </header>
+
+    <div class="tabs">
+        <!-- 頁面加載時，根據後端傳遞的 tab 值設置初始 active 樣式 -->
+        <button class="tab-button {% if tab == 'login' %}active{% endif %}" onclick="showTab('login')">登入</button>
+        <button class="tab-button {% if tab == 'signup' %}active{% endif %}" onclick="showTab('signup')">註冊</button>
+    </div>
+
+    <!-- 登入表單 -->
+    <div id="login" class="tab-content {% if tab == 'login' %}active{% endif %}">
+        <div class="form-container">
+            <form action="{{ url_for('login_signUp', tab='login') }}" method="post">
+                <div class="form-group">
+                    <label>帳號：</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>密碼：</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">登入</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 註冊表單 -->
+    <div id="signup" class="tab-content {% if tab == 'signup' %}active{% endif %}">
+        <div class="form-container">
+            <form action="{{ url_for('login_signUp', tab='signup') }}" method="post">
+                <div class="form-group">
+                    <label>帳號：</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>密碼：</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>確認密碼：</label>
+                    <input type="password" required>
+                </div>
+                <div class="form-group">
+                    <label>手機號碼：</label>
+                    <input type="number" name="contact" required>
+                </div>
+                <button type="submit" class="submit-btn">註冊</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
