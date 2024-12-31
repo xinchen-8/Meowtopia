@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貓咪領養網站</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'cat.css') }}">
+</head>
+<body>
+    <header class="header">
+        <h1>尋找你的完美貓咪夥伴</h1>
+        <p>每隻貓咪都在等待一個溫暖的家</p>
+    </header>
+
+    <div class="container">
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-image">
+                    <img src="/api/placeholder/280/200" alt="可愛貓咪">
+                    <div class="card-favorite">♡</div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">小花</h2>
+                    <div class="card-tags">
+                        <span class="tag">2歲</span>
+                        <span class="tag">母</span>
+                        <span class="tag">已結紮</span>
+                    </div>
+                    <p class="card-description">活潑好動的小花很喜歡和人互動，最愛追逐逗貓棒，是個完美的家庭寵物。</p>
+                    <button class="card-button">了解更多</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image">
+                    <img src="/api/placeholder/280/200" alt="黑貓">
+                    <div class="card-favorite">♡</div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">小黑</h2>
+                    <div class="card-tags">
+                        <span class="tag">1歲</span>
+                        <span class="tag">公</span>
+                        <span class="tag">已結紮</span>
+                    </div>
+                    <p class="card-description">溫柔的小黑性格沉穩，喜歡窩在主人腿上撒嬌，是個完美的陪伴者。</p>
+                    <button class="card-button">了解更多</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
