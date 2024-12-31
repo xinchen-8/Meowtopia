@@ -1,21 +1,20 @@
-# 領養貓咪系統
+# 喵托邦
 
 ## 專案結構
 ```
 final/
 ├── static/                      # 靜態文件夾，包含CSS、圖片等
-│   └── style.css                   # 設計
+│   ├── card_cat.css             
+│   └── style.css
 ├── templates/                   # 頁面文件夾
-│   ├── admin                    # 管理員
+│   ├── admin                    # 管理員專屬頁面
 │   │   ├── cat_info.html           # 管理貓咪資料頁面
-│   │   └── request_review.html     # 審核申請頁面
-│   ├── user                     # 用戶
-│   │   ├── dashboard.html          # 瀏覽頁面
-│   │   └── request.html            # 申請領養頁面
+│   │   └── request_review.html     # 審核用戶新增領養申請頁面
+│   ├── request.html             # 新增並填寫想要被領養貓咪的資訊
+│   ├── dashboard.html           # 瀏覽頁面
 │   ├── index.html               # 首頁
-│   ├── login.html               # 登入頁面
-│   ├── logout.html              # 登出頁面
-│   └── signUp.html              # 用戶注冊頁面
+│   ├── login_signUp.html        # 用戶登入/注冊頁面 
+│   └── logout.html              # 登出頁面
 ├── app.py                       # 主程式，處理後端邏輯
 └── README.md                    # 專案說明文件
 ```
@@ -23,10 +22,12 @@ final/
 ---
 
 ## 專案描述
-領養貓咪系統是一個面向愛貓人士的互動網站，用於瀏覽、申請領養貓咪，並幫助管理員高效處理領養申請。
+喵托邦是一個專為愛貓人士打造的互動網站，通過爬蟲整合多家流浪貓收容所的領養資訊，並允許用戶提交新增貓咪領養資訊申請，管理員對申請進行審核後可將信息發布至網站。
 
-該系統實現了用戶端和管理端功能，用戶可以查看貓咪詳情並提交領養申請，管理員則可以審核申請並管理貓咪資料。整個系統基於Flask框架，使用PostgreSQL作為數據存儲，並提供一個簡潔友好的界面。
-
+系統包括用戶端和管理端功能：
+- 用戶可瀏覽貓咪資訊、提交新增領養申請。
+- 管理員可管理貓咪資訊、審核用戶申請。
+整個系統基於Flask框架，數據存儲採用PostgreSQL，提供簡潔友好的界面，實現高效運作。
 ---
 
 ## 技術架構
@@ -45,7 +46,7 @@ final/
    - **Python**: 提供後端功能開發和數據處理。
    - **單元測試框架**: 確保代碼穩定性。
 
-5. **部署**（????????????）
+5. **部署**
    - **XXXX**: 
    - **SSL加密**: 確保數據傳輸安全。
 
@@ -53,70 +54,101 @@ final/
 
 ## 功能詳解
 
-### 1. **用戶端功能**
-   - 瀏覽待領養貓咪：
-     - 查看貓咪列表，包括名字、年齡、性別、健康狀態等。
-     - 點擊貓咪可進入詳情頁，查看更詳細的描述和圖片。
-   - 領養申請：
-     - 填寫申請表，提交領養需求。
-     - 自定義領養日期，說明領養原因。
+### 1. 賬號登入登出
+   - 用戶可註冊、登入及安全退出
 
-### 2. **管理端功能**
-   - 貓咪管理：
-     - 新增、修改、刪除貓咪資料。
-     - 更新貓咪領養狀態（如“待領養”、“已領養”）。
-   - 領養申請管理：
-     - 查看所有申請，根據用戶信息進行審核。
-     - 設定申請狀態（如“通過”或“拒絕”）。
+### 2. 用戶端功能
+   - 
+   - 新增領養資訊：
+     - 填寫並上傳貓咪資料（見貓咪table）
+     - 檢查貓咪資料上傳狀態（通過/駁回）
+         - **通過**：綠色框框，若其他用戶要申請領養，會顯示
+         - **駁回**：顯示駁回原因，可以讓用戶修改錯誤后再上傳
 
-### 3. **資料庫功能**
-   - 貓咪表（Cats）： 存儲貓咪的基本信息
+### 3. 管理端功能
+   - 管理貓咪領養資訊
+      - 可手動重新爬蟲獲取最新的流浪貓收容所的領養資訊
+      - 可刪除不適合的領養資訊
+   - 審核新增領養咨詢：
+     - **檢查賬號是否為管理員**
+         - 若是**管理員**：直接新增到資料庫
+         - 否則：需要管理員審核
+     - 查看所有申請，根據用戶上傳内容進行審核
+     - 設定申請狀態（如“通過”或“拒絕”）
+     - 拒絕理由（必填）
+
+### 4. 資料庫功能
+   - 全球貓咪表（global cats）： 存儲爬蟲獲取的貓咪基本信息
+        - id
         - 名字
         - 年齡
         - 性別
-        - 品種
         - 健康狀況(疫苗/絕育...)
         - 性格
-   - 用戶表（Users）：存儲領養者的基本信息
+   - 本地貓咪表（local cats）:存儲管理員的審核通過的用戶所新增的領養貓資訊
+         - id
+         - 名字
+         - 年齡
+         - 。。。
+   - 用戶表（users）：存儲領養者的基本信息
+        - id
         - 用戶名username
-        - 密碼 password
+        - 密碼 password (經過哈希處理)
         - 年齡
         - 性別
         - 聯絡方式
-   - 領養申請表（Adoptions）：記錄每次申請的詳細信息
-        - 用戶
-        - 貓咪
+   - 申請表（request）：記錄每次申請的詳細信息
+        - id
+        - 申請用戶ID
+        - 貓咪資料（**貓咪表需要的**）
         - 申請原因
-        - 欲領養日期
-        - 申請狀態
+        - 申請日期
+        - 申請狀態：-1未通過，0等待審核，1通過等待領養，2通過且成功被領養
 ```
+-- 全球貓咪表 (global_cats)
+CREATE TABLE global_cats (
+    id SERIAL PRIMARY KEY,                -- 唯一標識
+    name VARCHAR(100) NOT NULL,           -- 名字
+    age INT,                              -- 年齡
+    gender VARCHAR(10),                   -- 性別
+    health_status VARCHAR(255),           -- 健康狀況（如疫苗、絕育等）
+    personality TEXT                      -- 性格描述
+);
+
+-- 本地貓咪表 (local_cats)
+CREATE TABLE local_cats (
+    id SERIAL PRIMARY KEY,                -- 唯一標識
+    name VARCHAR(100) NOT NULL,           -- 名字
+    age INT,                              -- 年齡
+    gender VARCHAR(10),                   -- 性別
+    health_status VARCHAR(255),           -- 健康狀況（如疫苗、絕育等）
+    personality TEXT                      -- 性格描述
+);
+
+-- 用戶表 (users)
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(150) NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    age INT,
-    gender VARCHAR(10),
-    contact VARCHAR(255)
+    id SERIAL PRIMARY KEY,                -- 唯一標識
+    username VARCHAR(150) NOT NULL UNIQUE, -- 用戶名
+    password_hash TEXT NOT NULL,          -- 密碼（經過哈希處理）
+    age INT,                              -- 年齡
+    gender VARCHAR(10),                   -- 性別
+    contact VARCHAR(255)                  -- 聯絡方式
 );
 
-CREATE TABLE cats (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    age INT,
-    gender VARCHAR(10),
-    health_status VARCHAR(50),
-    personality TEXT,
-    adoption_status VARCHAR(20) DEFAULT 'available'
+-- 申請表 (requests)
+CREATE TABLE requests (
+    id SERIAL PRIMARY KEY,                -- 唯一標識
+    user_id INT REFERENCES users(id) ON DELETE CASCADE, -- 申請用戶ID
+    cat_name VARCHAR(100) NOT NULL,       -- 貓咪名字
+    cat_age INT,                          -- 貓咪年齡
+    cat_gender VARCHAR(10),               -- 貓咪性別
+    cat_health_status VARCHAR(255),       -- 貓咪健康狀況
+    cat_personality TEXT,                 -- 貓咪性格
+    reason TEXT NOT NULL,                 -- 申請原因
+    request_date DATE DEFAULT CURRENT_DATE, -- 申請日期
+    status SMALLINT DEFAULT 0             -- 申請狀態：-1未通過，0等待審核，1通過等待領養，2通過且成功被領養
 );
 
-CREATE TABLE adoptions (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    cat_id INT REFERENCES cats(id) ON DELETE CASCADE,
-    reason TEXT NOT NULL,
-    planned_date DATE,
-    status VARCHAR(20) DEFAULT 'pending'
-);
 ```
 ---
 
@@ -143,7 +175,7 @@ CREATE TABLE adoptions (
 ---
 
 ## 專案總結
-- 領養貓咪系統實現了從用戶提交到管理端審核的完整流程。
+- 喵托邦實現了從用戶提交到管理端審核的完整流程。(待修)
 - 整個系統結構清晰，基於Flask和PostgreSQL，具備良好的擴展性。
 - 該專案結合實際需求，展現了強大的後端功能與友好的用戶界面，對社會公益有積極意義。
 
