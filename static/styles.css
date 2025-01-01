@@ -3,6 +3,8 @@
     --primary-dark: #ff6600;
     --text-light: #FFE4B5;
     --background: #fff5e6;
+    --background_ad: #cae2fa;
+    --a: #0773FF;
 }
 
 /* 重置所有元素的預設樣式 */
@@ -16,7 +18,7 @@
 body {
     font-family: "Microsoft JhengHei", Arial, sans-serif;
     background-color: var(--background);
-    min-height: 100vh;
+    padding-top: 70px; /* 預留空間給 header */
 }
 
 /* 頂部導航欄樣式 */
@@ -31,6 +33,10 @@ body {
     top: 0;
     width: 100%;
     z-index: 1000;
+}
+
+.header-admin {
+    background-color: var(--a);
 }
 
 /* 網站 Logo 樣式 */
@@ -52,7 +58,8 @@ body {
     gap: 1.2rem;
 }
 
-.auth-buttons a {
+.auth-buttons a,
+.auth-buttons button {
     text-decoration: none;
     color: white;
     padding: 0.6rem 1.2rem;
@@ -60,12 +67,15 @@ body {
     border-radius: 25px;
     transition: all 0.3s;
     font-weight: 500;
+    display: inline-block; /* 確保 button 和 a 的顯示方式一致 */
 }
 
-.auth-buttons a:hover {
+.auth-buttons a:hover,
+.auth-buttons button:hover {
     background: white;
     color: var(--primary);
 }
+
 
 /* Hero 區域樣式 - 網站主要視覺焦點 */
 .hero {
@@ -111,10 +121,10 @@ body {
     color: white;
     padding: 1rem 2.5rem;
     border-radius: 30px;
-    text-decoration: none;
     font-size: 1.1rem;
     transition: all 0.3s;
     font-weight: bold;
+    border: none;
 }
 
 .cta-button:hover {
@@ -164,11 +174,10 @@ body {
 .tabs {
     display: flex;
     justify-content: center;
-    margin-top: 80px; /* 根據需要調整 */
     margin-bottom: 30px;
     border-bottom: 2px solid #e0e0e0;
-    position: relative; /* 確保可以應用 z-index */
-    z-index: 999; /* 使 .tabs 在 header 下方 */
+    position: relative; 
+    z-index: 1; /* 使 .tabs 在 header 下方 */
 }
 
 .tab-content {
@@ -191,11 +200,11 @@ body {
 }
 
 .tab-button:hover {
-    color: #ff8c1a;
+    color: var(--primary);
 }
 
 .tab-button.active {
-    color: #ff8c1a;
+    color: var(--primary);
 }
 
 .tab-button.active::after {
@@ -211,7 +220,7 @@ body {
 /* 表單樣式 */
 .form-container {
     max-width: 400px;
-    margin: 50px auto;
+    margin: 10px auto;
     padding: 20px;
     background: white;
     border-radius: 8px;
@@ -248,4 +257,33 @@ body {
 
 .submit-btn:hover {
     background-color: #ff6600;
+}
+
+/* 訊息提示樣式 */
+.alert {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+    position: relative; 
+    z-index: 0; /* 確保alert在tabs下方 */
+}
+
+.alert-success {
+    background-color: #3bf497;
+    color: #ffffff;
+}
+
+.alert-danger {
+    background-color: #fe0f0f;
+    color: #ffffff;
+}
+
+.alert-warning {
+    background-color: #fbc410;
+    color: #ffffff;
 }

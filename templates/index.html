@@ -11,8 +11,14 @@
     <header class="header">
         <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
         <nav class="auth-buttons">
-            <a href="{{ url_for('login_signUp', tab='login') }}">登入</a>
-            <a href="{{ url_for('login_signUp', tab='signup') }}">註冊</a>
+            {% if current_user.is_authenticated %}
+                <!-- 已登入時顯示登出按鈕 -->
+                <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
+            {% else %}
+                <!-- 未登入時顯示登入和註冊按鈕 -->
+                <a href="{{ url_for('login_signUp', tab='login') }}">登入</a>
+                <a href="{{ url_for('login_signUp', tab='signup') }}">註冊</a>
+            {% endif %}
         </nav>
     </header>
     
@@ -20,9 +26,27 @@
         <div class="hero-content">
             <h1>為浪貓找一個溫暖的家</h1>
             <p>瀏覽來自全台各地的領養資訊，給予流浪貓咪一個機會</p>
-            <button class="cta-button" onclick="">立即領養</button>
+            <button class="cta-button" onclick="redirectAdoptPage()">立即領養</button>
         </div>
     </main>
+    <script>
+       function redirectAdoptPage() {
+            // 根據後端變數控制跳轉路徑
+            let redirectUrl = "{{ url_for('login_signUp', tab='login') }}";  // 預設跳轉到登入頁面
+
+            {% if logged_in %}
+                {% if current_user.is_admin %}
+                    // 如果用戶是管理員，跳轉到管理員頁面
+                    redirectUrl = "{{ url_for('admin_cat_info') }}";
+                {% else %}
+                    // 否則跳轉到普通用戶的 dashboard
+                    redirectUrl = "{{ url_for('dashboard') }}";
+                {% endif %}
+            {% endif %}
+
+            window.location.href = redirectUrl;
+        }
+    </script>
     
     <div class="mascot">
         <img src="{{ url_for('static', filename='images/mascot.png') }}" alt="喵托邦吉祥物" style="width: 100%; height: 100%; object-fit: cover;">

@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,8 +9,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 # 配置數據庫連接
-app.config['SECRET_KEY'] = '87518875' #'Jin_xin0816'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:87518875@localhost/Meowtopia' #'postgresql://postgres:Jin_xin0816@localhost/my_hotel'
+app.config['SECRET_KEY'] = 'Jin_xin0816' #'87518875'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -19,6 +19,7 @@ login_manager.login_view = 'login'
 
 # 用戶類別
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)    # 用戶名，不可重複
     password_hash = db.Column(db.String(128))                           # 加密後的密碼
@@ -26,7 +27,21 @@ class User(db.Model):
     gender = db.Column(db.String(10))
     contact = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
+    is_admin = db.Column(db.Boolean, default=False)  # 預設為 False（普通用戶）
     #adoptions = db.relationship('Adoption', backref='user', lazy=True)  # 申請領養資料
+
+    # 必须实现 Flask-Login 的方法
+    def is_authenticated(self):
+        # 此方法用来返回是否已认证
+        return True  # 或者根据你的需求添加额外的逻辑
+
+    def is_active(self):
+        # 你可以根据需要修改这个方法，默认返回 True 表示账户活跃
+        return True
+
+    def get_id(self):
+        # 返回用户的唯一 ID
+        return str(self.id)
 
     # 密碼設置
     def set_password(self, password):

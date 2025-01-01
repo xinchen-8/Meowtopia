@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>登入 / 註冊</title>
+
     <script>
         function showTab(tabId) {
             // 隱藏所有內容
@@ -29,13 +30,21 @@
     <header class="header">
         <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
     </header>
+    
 
     <div class="tabs">
         <!-- 頁面加載時，根據後端傳遞的 tab 值設置初始 active 樣式 -->
         <button class="tab-button {% if tab == 'login' %}active{% endif %}" onclick="showTab('login')">登入</button>
         <button class="tab-button {% if tab == 'signup' %}active{% endif %}" onclick="showTab('signup')">註冊</button>
     </div>
-
+    <!-- 這裡是錯誤提示的部分-->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
     <!-- 登入表單 -->
     <div id="login" class="tab-content {% if tab == 'login' %}active{% endif %}">
         <div class="form-container">
@@ -62,12 +71,24 @@
                     <input type="text" name="username" required>
                 </div>
                 <div class="form-group">
+                    <label for="age">年齡</label>
+                    <input type="number" id="age" name="age" class="form-control" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="gender">性別</label>
+                    <select id="gender" name="gender" class="form-control">
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>密碼：</label>
                     <input type="password" name="password" required>
                 </div>
                 <div class="form-group">
                     <label>確認密碼：</label>
-                    <input type="password" required>
+                    <input type="password" name="confirm_password" required>
                 </div>
                 <div class="form-group">
                     <label>手機號碼：</label>

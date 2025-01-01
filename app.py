@@ -3,7 +3,7 @@ from classes import *
 # 首頁
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', logged_in=current_user.is_authenticated)
 
 # 登入和註冊
 @app.route('/login_signUp', methods=['GET', 'POST'])
@@ -12,22 +12,47 @@ def login_signUp():
 
     if tab == 'login' and request.method == 'POST':
         # 登入邏輯
-        user = User.query.filter_by(username=request.form['username']).first()
-        if user and user.check_password(request.form['password']):
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('dashboard'))
-        flash('無效的用戶名或密碼')
+            return redirect(url_for('home'))
+        flash('無效的用戶名或密碼', 'danger')
 
     elif tab == 'signup' and request.method == 'POST':
         # 註冊邏輯
-        user = User(
-            username=request.form['username'],
-            contact=request.form['contact']
-        )
-        user.set_password(request.form['password'])
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('login_signUp', tab='login'))
+        username = request.form['username']
+        contact = request.form['contact']
+        age = request.form['age']  
+        gender = request.form['gender']  
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        if password != confirm_password:
+            flash('密碼不一致', 'warning')
+            return redirect(url_for('login_signUp', tab='signup'))
+
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash('該用戶名已被使用', 'warning')
+        elif len(password) < 8:  # 簡單的密碼強度檢查
+            flash('密碼長度必須至少為 8 位', 'warning')
+        else:
+            try:
+                user = User(
+                    username=username, 
+                    contact=contact, 
+                    age=age,  
+                    gender=gender
+                )
+                user.set_password(password)
+                db.session.add(user)
+                db.session.commit()
+                flash('註冊成功，請登入！', 'success')
+                return redirect(url_for('login_signUp', tab='login'))
+            except Exception as e:
+                db.session.rollback()
+                flash('註冊時出現問題，請重試', 'danger')
 
     return render_template('login_signUp.html', tab=tab)
 
@@ -36,6 +61,7 @@ def login_signUp():
 @login_required
 def logout():
     logout_user()
+    session.clear()  # 清空 session
     return redirect(url_for('home'))
 
 # ---------------------------- 用戶路由   --------------------------

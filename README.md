@@ -78,6 +78,11 @@ final/
      - 拒絕理由（必填）
 
 ### 4. 資料庫功能
+   - 創建管理員賬號(密碼：meowtopia)
+   ```
+   INSERT INTO users (username, password_hash, is_admin) 
+VALUES ('admin', 'scrypt:32768:8:1$nmV9LvPJFOhQrYdD$e290620bc07bde8204a81431cf30804349ff7c283e89ae2784a0ab7aaa004742c8ad222b79da0dc314807307c78f48aa0c2c47f45142646674f1d5124a973ce2', TRUE);
+   ```
    - 全球貓咪表（global cats）： 存儲爬蟲獲取的貓咪基本信息
         - id
         - 名字
@@ -132,7 +137,8 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,          -- 密碼（經過哈希處理）
     age INT,                              -- 年齡
     gender VARCHAR(10),                   -- 性別
-    contact VARCHAR(255)                  -- 聯絡方式
+    contact VARCHAR(255),                 -- 聯絡方式
+    is_admin BOOLEAN DEFAULT FALSE        -- 檢查是不是admin
 );
 
 -- 申請表 (requests)
