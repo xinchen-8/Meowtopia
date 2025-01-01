@@ -11,11 +11,32 @@
     <header class="header">
         <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
         <nav class="auth-buttons">
-            <a href="{{ url_for('manage_request') }}" class="auth-buttons">管理</a>
+            <a href="{{ url_for('manage_request') }}" class="auth-buttons">領養表單</a>
             <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
         </nav>
     </header>
-
+    <!-- 搜尋表單 -->
+    <div class="search-container">
+        <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
+            <div class="search-group">
+                <label class="search-label" for="cat_name">貓咪名稱</label>
+                <input type="text" name="cat_name" class="search-input" id="cat_name">
+            </div>
+            <div class="search-group">
+                <label class="search-label" for="cat_gender">性別</label>
+                <select name="cat_gender" class="search-input" id="cat_gender">
+                    <option value="">全部</option>
+                    <option value="公">公</option>
+                    <option value="母">母</option>
+                </select>
+            </div>
+            <div class="search-group">
+                <label class="search-label" for="cat_age">年齡</label>
+                <input type="number" name="cat_age" class="search-input" id="cat_age" min="0">
+            </div>
+            <button type="submit" class="search-button">搜尋</button>
+        </form>
+    </div>
     <div class="container">
         <div class="card-grid">
             {% for cat in cats.items %}

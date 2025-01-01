@@ -66,14 +66,26 @@ def logout():
 
 # ---------------------------- 用戶路由   --------------------------
 # 用戶：顯示所有貓咪資訊
-@app.route('/user/dashboard')
+@app.route('/user/dashboard', methods=['Get', 'POST'])
 @login_required
 def dashboard():
-    per_page = 15  # 每頁顯示 15 個貓咪（3列 * 5行）
+    per_page = 15
+    page = request.args.get('page', 1, type=int)
+    query = Cat.query
 
-    page = request.args.get('page', 1, type=int)  # 取得當前頁數，預設為第 1 頁
-    cats = Cat.query.paginate(page=page, per_page=per_page, error_out=False)  # 分頁查詢貓咪資料
+    if request.method == 'POST':
+        name = request.form.get('cat_name')
+        gender = request.form.get('cat_gender')
+        age = request.form.get('cat_age')
+        
+        if name:
+            query = query.filter(Cat.name.ilike(f'%{name}%'))
+        if gender:
+            query = query.filter(Cat.gender == gender)
+        if age:
+            query = query.filter(Cat.age == int(age))
 
+    cats = query.paginate(page=page, per_page=per_page, error_out=False)
     return render_template('user/dashboard.html', cats=cats)
 
 # 用於獲取貓咪詳細信息
@@ -123,11 +135,10 @@ def admin_cat_info():
     return render_template('admin/cat_info.html', cats=cats)
 
 # 管理員：領養申請審核頁面
-# @app.route('/admin/request_review')
-# @login_required
-# def admin_request_review():
-#     adoptions = Adoption.query.filter_by(status='pending').all()
-#     return render_template('admin/request_review.html', adoptions=adoptions)
+@app.route('/admin/request_review')
+@login_required
+def admin_request_review():
+    return render_template('admin/request_review.html')
 
 # 管理員：更新領養申請狀態
 # @app.route('/admin/request_review/<int:adoption_id>', methods=['POST'])
