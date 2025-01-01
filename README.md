@@ -58,7 +58,7 @@ final/
    - 用戶可註冊、登入及安全退出
 
 ### 2. 用戶端功能
-   - 
+   - 可以查看所有貓咪資訊
    - 新增領養資訊：
      - 填寫並上傳貓咪資料（見貓咪table）
      - 檢查貓咪資料上傳狀態（通過/駁回）
@@ -92,9 +92,12 @@ VALUES ('admin', 'scrypt:32768:8:1$nmV9LvPJFOhQrYdD$e290620bc07bde8204a81431cf30
         - 性格
    - 本地貓咪表（local cats）:存儲管理員的審核通過的用戶所新增的領養貓資訊
          - id
+         - 上傳用戶id
          - 名字
          - 年齡
-         - 。。。
+         - 性別
+         - 健康狀況(疫苗/絕育...)
+         - 性格
    - 用戶表（users）：存儲領養者的基本信息
         - id
         - 用戶名username
@@ -102,6 +105,7 @@ VALUES ('admin', 'scrypt:32768:8:1$nmV9LvPJFOhQrYdD$e290620bc07bde8204a81431cf30
         - 年齡
         - 性別
         - 聯絡方式
+        - 創戶時間
    - 申請表（request）：記錄每次申請的詳細信息
         - id
         - 申請用戶ID
@@ -120,16 +124,6 @@ CREATE TABLE global_cats (
     personality TEXT                      -- 性格描述
 );
 
--- 本地貓咪表 (local_cats)
-CREATE TABLE local_cats (
-    id SERIAL PRIMARY KEY,                -- 唯一標識
-    name VARCHAR(100) NOT NULL,           -- 名字
-    age INT,                              -- 年齡
-    gender VARCHAR(10),                   -- 性別
-    health_status VARCHAR(255),           -- 健康狀況（如疫苗、絕育等）
-    personality TEXT                      -- 性格描述
-);
-
 -- 用戶表 (users)
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,                -- 唯一標識
@@ -139,6 +133,20 @@ CREATE TABLE users (
     gender VARCHAR(10),                   -- 性別
     contact VARCHAR(255),                 -- 聯絡方式
     is_admin BOOLEAN DEFAULT FALSE        -- 檢查是不是admin
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 記錄創建時間
+);
+
+-- 本地貓咪表 (local_cats)
+CREATE TABLE local_cats (
+    id SERIAL PRIMARY KEY,                 -- 唯一標識
+    user_id INT NOT NULL,                   -- 用戶 ID，外鍵參照 users 表
+    name VARCHAR(100) NOT NULL,             -- 貓咪名字
+    age INT,                                -- 貓咪年齡
+    gender VARCHAR(10),                     -- 貓咪性別
+    health_status VARCHAR(255),             -- 貓咪健康狀況（如疫苗、絕育等）
+    personality TEXT,                       -- 貓咪性格描述
+    img BYTEA,                              -- 貓咪圖片，使用 BYTEA 類型來存儲二進制數據
+    FOREIGN KEY (user_id) REFERENCES users(id)  -- 外鍵，關聯到 users 表
 );
 
 -- 申請表 (requests)
@@ -154,7 +162,6 @@ CREATE TABLE requests (
     request_date DATE DEFAULT CURRENT_DATE, -- 申請日期
     status SMALLINT DEFAULT 0             -- 申請狀態：-1未通過，0等待審核，1通過等待領養，2通過且成功被領養
 );
-
 ```
 ---
 

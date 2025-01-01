@@ -217,73 +217,223 @@ body {
     background-color: #ff8c1a;
 }
 
-/* 表單樣式 */
-.form-container {
-    max-width: 400px;
-    margin: 10px auto;
+/* 容器樣式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.form-group {
-    margin-bottom: 20px;
+/* 多分頁控制樣式 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+    padding: 20px 0;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
+.pagination a {
+    padding: 8px 16px;
+    background-color: #4A90E2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #357ABD;
+}
+
+.pagination span {
+    color: #666;
+}
+
+/* 頁碼樣式 */
+.pagination .current-page {
+    font-weight: bold;
     color: #333;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+/* Modal 基本樣式 */
+/* Modal 基礎動畫 */
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
-.submit-btn {
-    background-color: #ff8c1a;
-    color: white;
-    padding: 10px 20px;
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Modal 基本樣式 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    animation: overlayFadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 700px;
+    position: relative;
+    padding: 40px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        0 1px 8px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.modal-close {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    background: rgba(255, 255, 255, 0.9);
     border: none;
-    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 24px;
     cursor: pointer;
-    width: 100%;
+    color: #666;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close:hover {
+    background: #fff;
+    color: #333;
+    transform: rotate(90deg);
+}
+
+/* 貓咪資訊樣式 */
+.cat-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.cat-info h2 {
+    grid-column: 1 / -1;
+    font-size: 32px;
+    color: #2d3436;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.cat-info h2::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    background: #4A90E2;
+}
+
+.info-item {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-label {
+    display: block;
+    color: #888;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    display: block;
+    color: #2d3436;
     font-size: 1.1em;
+    font-weight: 500;
 }
 
-.submit-btn:hover {
-    background-color: #ff6600;
+/* 聯絡資訊區塊 */
+.contact-info {
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: 15px;
+    position: relative;
 }
 
-/* 訊息提示樣式 */
-.alert {
+.contact-info h3 {
+    font-size: 20px;
+    color: #2d3436;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-info h3::before {
+    content: '📞';
+    font-size: 24px;
+}
+
+.contact-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.contact-details p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2d3436;
+    font-size: 1.1em;
     padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    background-color: #f8d7da;
-    color: #721c24;
-    font-size: 1rem;
-    text-align: center;
-    width: 100%;
-    position: relative; 
-    z-index: 0; /* 確保alert在tabs下方 */
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    transition: transform 0.2s ease;
 }
 
-.alert-success {
-    background-color: #3bf497;
-    color: #ffffff;
+.contact-details p:hover {
+    transform: translateX(5px);
 }
 
-.alert-danger {
-    background-color: #fe0f0f;
-    color: #ffffff;
-}
-
-.alert-warning {
-    background-color: #fbc410;
-    color: #ffffff;
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .cat-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        padding: 25px;
+        margin: 15px;
+    }
 }

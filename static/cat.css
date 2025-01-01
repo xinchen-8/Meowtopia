@@ -1,6 +1,6 @@
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   padding: 20px;
 }
@@ -18,7 +18,7 @@
 }
 
 .card-image {
-  height: 200px;
+  height: 250px;
   overflow: hidden;
   position: relative;
 }
@@ -73,7 +73,7 @@
   display: block;
   width: 100%;
   padding: 12px;
-  background: #4A90E2;
+  background: #ff8c1a;
   color: white;
   text-align: center;
   border: none;
@@ -83,5 +83,5 @@
 }
 
 .card-button:hover {
-  background: #357ABD;
+  background: #ff6600;
 }

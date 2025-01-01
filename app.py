@@ -69,26 +69,39 @@ def logout():
 @app.route('/user/dashboard')
 @login_required
 def dashboard():
-    user_adoptions = current_user.adoptions  # 獲取當前用戶的所有領養申請
-    return render_template('user/dashboard.html', adoptions=user_adoptions)
+    per_page = 15  # 每頁顯示 15 個貓咪（3列 * 5行）
 
+    page = request.args.get('page', 1, type=int)  # 取得當前頁數，預設為第 1 頁
+    cats = Cat.query.paginate(page=page, per_page=per_page, error_out=False)  # 分頁查詢貓咪資料
 
-# # 用戶：領養申請
-# @app.route('/user/request/<int:cat_id>', methods=['GET', 'POST'])
-# @login_required
-# def adoption_request(cat_id):
-#     if request.method == 'POST':
-#         adoption = Adoption(
-#             user_id=current_user.id,
-#             cat_id=cat_id,
-#             reason=request.form['reason'],
-#             planned_date=request.form['planned_date']
-#         )
-#         db.session.add(adoption)
-#         db.session.commit()
-#         return redirect(url_for('dashboard'))
-#     cat = Cat.query.get_or_404(cat_id)
-#     return render_template('user/request.html', cat=cat)
+    return render_template('user/dashboard.html', cats=cats)
+
+# 用於獲取貓咪詳細信息
+@app.route('/api/cat/<int:cat_id>')
+def get_cat(cat_id):
+    # 查詢貓咪及其關聯用戶
+    cat = Cat.query.get_or_404(cat_id)
+    user = User.query.get_or_404(cat.user_id)  # 通過關聯屬性獲取用戶信息
+    
+    # 返回 JSON 數據，包括貓咪信息和用戶聯繫方式
+    return jsonify({
+        'cat': {
+            'id': cat.id,
+            'name': cat.name,
+            'age': cat.age,
+            'gender': cat.gender,
+            'health_status': cat.health_status,
+            'personality': cat.personality,
+            'img': cat.img.decode('utf-8') if cat.img else None  # 將圖片轉為 Base64 字符串返回（若需要）
+        },
+        'user_contact': user.contact  # 包含用戶的聯繫方式
+    })
+
+# 用戶：領養申請
+@app.route('/user/manage_request')
+@login_required
+def manage_request():
+    return render_template('user/request.html')
 
 # ---------------------------- 管理員路由  -------------------------------
 # 管理員：貓咪資料頁面

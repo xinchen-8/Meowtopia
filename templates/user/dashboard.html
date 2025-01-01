@@ -3,51 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>貓咪領養網站</title>
+    <title>喵托邦 - 貓咪領養平台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'cat.css') }}">
 </head>
 <body>
     <header class="header">
-        <h1>尋找你的完美貓咪夥伴</h1>
-        <p>每隻貓咪都在等待一個溫暖的家</p>
+        <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+        <nav class="auth-buttons">
+            <a href="{{ url_for('manage_request') }}" class="auth-buttons">管理</a>
+            <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
+        </nav>
     </header>
 
     <div class="container">
         <div class="card-grid">
-            <div class="card">
-                <div class="card-image">
-                    <img src="/api/placeholder/280/200" alt="可愛貓咪">
-                    <div class="card-favorite">♡</div>
-                </div>
-                <div class="card-content">
-                    <h2 class="card-title">小花</h2>
-                    <div class="card-tags">
-                        <span class="tag">2歲</span>
-                        <span class="tag">母</span>
-                        <span class="tag">已結紮</span>
+            {% for cat in cats.items %}
+                <div class="card">
+                    <div class="card-image">
+                        <img src="/api/placeholder/280/200" alt="{{ cat.name }}">
+                        <div class="card-favorite">♡</div>
                     </div>
-                    <p class="card-description">活潑好動的小花很喜歡和人互動，最愛追逐逗貓棒，是個完美的家庭寵物。</p>
-                    <button class="card-button">了解更多</button>
+                    <div class="card-content">
+                        <h2 class="card-title">{{ cat.name }}</h2>
+                        <div class="card-tags">
+                            <span class="tag">{{ cat.age }}歲</span>
+                            <span class="tag">{{ cat.gender }}</span>
+                        </div>
+                        <p class="card-description">{{ cat.description }}</p>
+                        <button class="card-button" data-cat-id="{{ cat.id }}">了解更多</button>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
+        </div>
 
-            <div class="card">
-                <div class="card-image">
-                    <img src="/api/placeholder/280/200" alt="黑貓">
-                    <div class="card-favorite">♡</div>
-                </div>
-                <div class="card-content">
-                    <h2 class="card-title">小黑</h2>
-                    <div class="card-tags">
-                        <span class="tag">1歲</span>
-                        <span class="tag">公</span>
-                        <span class="tag">已結紮</span>
+        <!-- 分頁按鈕 -->
+        <div class="pagination">
+            {% if cats.has_prev %}
+                <a href="{{ url_for('dashboard', page=cats.prev_num) }}">上一頁</a>
+            {% endif %}
+            <span>頁數: {{ cats.page }} / {{ cats.pages }}</span>
+            {% if cats.has_next %}
+                <a href="{{ url_for('dashboard', page=cats.next_num) }}">下一頁</a>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Modal HTML 結構 -->
+    <div class="modal-overlay" id="catModal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-body">
+                <div class="cat-info">
+                    <h2 id="modalCatName"></h2>
+                    <div class="info-item">
+                        <span class="info-label">年齡：</span>
+                        <span class="info-value" id="modalCatAge"></span>
                     </div>
-                    <p class="card-description">溫柔的小黑性格沉穩，喜歡窩在主人腿上撒嬌，是個完美的陪伴者。</p>
-                    <button class="card-button">了解更多</button>
+                    <div class="info-item">
+                        <span class="info-label">性別：</span>
+                        <span class="info-value" id="modalCatGender"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">品種：</span>
+                        <span class="info-value" id="modalCatBreed"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">健康狀況：</span>
+                        <span class="info-value" id="modalCatHealth"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">性格：</span>
+                        <span class="info-value" id="modalCatPersonality"></span>
+                    </div>
+                </div>
+                <div class="contact-info">
+                    <h3>聯絡資訊</h3>
+                    <div class="contact-details">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 修改 JavaScript -->
+    <script>
+    async function openModal(catId) {
+        try {
+            // 獲取貓咪詳細信息
+            const response = await fetch(`/api/cat/${catId}`);
+            const catData = await response.json();
+
+            // 更新 Modal 內容
+            document.getElementById('modalCatName').textContent = catData.cat.name;
+            document.getElementById('modalCatAge').textContent = `${catData.cat.age}歲`;
+            document.getElementById('modalCatGender').textContent = catData.cat.gender;
+            document.getElementById('modalCatBreed').textContent = catData.cat.breed || '未知';  // 若無品種資料可設為 "未知"
+            document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
+            document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
+
+            // 更新聯絡資訊
+            document.querySelector('.contact-details').innerHTML = `
+                <p>聯絡人：${catData.user_contact}</p>
+                <p>聯絡方式：${catData.user_contact}</p>
+            `;
+
+            // 顯示 Modal
+            const modal = document.getElementById('catModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        } catch (error) {
+            console.error('Error fetching cat details:', error);
+            alert('無法獲取貓咪資料，請稍後再試');
+        }
+    }
+
+
+    // 關閉 Modal
+    function closeModal() {
+        const modal = document.getElementById('catModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // 點擊背景關閉
+    document.querySelector('.modal-overlay').addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-overlay')) {
+            closeModal();
+        }
+    });
+
+    // 關閉按鈕
+    document.querySelector('.modal-close').addEventListener('click', closeModal);
+
+    // 綁定卡片上的按鈕
+    document.querySelectorAll('.card-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const catId = button.dataset.catId;
+            openModal(catId);
+        });
+    });
+    </script>
 </body>
 </html>

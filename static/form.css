@@ -1,0 +1,70 @@
+/* 表單樣式 */
+.form-container {
+    max-width: 400px;
+    margin: 10px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.submit-btn {
+    background-color: #ff8c1a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1em;
+}
+
+.submit-btn:hover {
+    background-color: #ff6600;
+}
+
+/* 訊息提示樣式 */
+.alert {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+    position: relative; 
+    z-index: 0; /* 確保alert在tabs下方 */
+}
+
+.alert-success {
+    background-color: #3bf497;
+    color: #ffffff;
+}
+
+.alert-danger {
+    background-color: #fe0f0f;
+    color: #ffffff;
+}
+
+.alert-warning {
+    background-color: #fbc410;
+    color: #ffffff;
+}

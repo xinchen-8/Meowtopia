@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, session
+from flask import Flask, request, render_template, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -26,6 +26,7 @@ class User(db.Model):
     age = db.Column(db.Integer)  
     gender = db.Column(db.String(10))
     contact = db.Column(db.String(255))
+    cats = db.relationship('Cat', backref='owner', lazy=True)  # 與 Cat 的反向關聯
     created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
     is_admin = db.Column(db.Boolean, default=False)  # 預設為 False（普通用戶）
     #adoptions = db.relationship('Adoption', backref='user', lazy=True)  # 申請領養資料
@@ -59,16 +60,19 @@ def load_user(user_id):
 class Cat(db.Model):
     __tablename__ = 'local_cats'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # 用戶 ID，外鍵
     name = db.Column(db.String(80), nullable=False)                     # 貓咪名字
-    age = db.Column(db.String(15))                                         # 年齡
+    age = db.Column(db.String(15))                                      # 年齡
     gender = db.Column(db.String(10))                                   # 性別
     health_status = db.Column(db.Text)                                  # 健康狀況
     personality = db.Column(db.Text)                                    # 性格特點
-    img =  db.Column(db.String(255))                                        # 圖片網址
+    img =  db.Column(db.LargeBinary)                                    # 存儲照片的二進制數據
     #adoption_status = db.Column(db.String(20), default='available')     # 領養狀態
     #created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
     #adoptions = db.relationship('Adoption', backref='cat', lazy=True)   # 與領養申請的關聯
 
+    # 定義與用戶表的關聯
+    user = db.relationship('User', backref=db.backref('local_cats', lazy=True))
 
 class GlobalCat(db.Model):
     __tablename__ = 'global_cats'
@@ -78,7 +82,7 @@ class GlobalCat(db.Model):
     gender = db.Column(db.String(10))                                   # 性別
     health_status = db.Column(db.Text)                                  # 健康狀況
     personality = db.Column(db.Text)                                    # 性格特點
-    img =  db.Column(db.String(255))                                        # 圖片網址
+    img =  db.Column(db.String(255))                                     # 圖片網址
     #adoption_status = db.Column(db.String(20), default='available')     # 領養狀態
     #created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
     #adoptions = db.relationship('Adoption', backref='cat', lazy=True)   # 與領養申請的關聯
