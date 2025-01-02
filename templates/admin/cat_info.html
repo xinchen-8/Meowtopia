@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員-管理頁面</title>
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'cat.css') }}">
 </head>
+<body class="admin">
     <div class="layout">
         <header class="header">
             <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
@@ -28,6 +30,7 @@
 
         <!-- 搜尋表單 -->
         <div class="search-container">
+            <form method="POST" action="{{ url_for('admin_cat_info') }}" class="search-form">
                 <div class="search-group">
                     <label class="search-label" for="cat_name">貓咪名稱</label>
                     <input type="text" name="cat_name" class="search-input" id="cat_name">
@@ -107,9 +110,11 @@
             <!-- 分頁按鈕 -->
             <div class="pagination">
                 {% if cats.has_prev %}
+                    <a href="{{ url_for('admin_cat_info', page=cats.prev_num) }}">上一頁</a>
                 {% endif %}
                 <span>頁數: {{ cats.page }} / {{ cats.pages }}</span>
                 {% if cats.has_next %}
+                    <a href="{{ url_for('admin_cat_info', page=cats.next_num) }}">下一頁</a>
                 {% endif %}
             </div>
         </div>

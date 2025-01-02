@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員-審核後台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
 </head>
+<body class="admin">
+    <div class="layout">
+        <header class="header">
+            <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+            <nav class="auth-buttons">
+                <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
             </nav>
+        </header>
 
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <ul>
+                <li>
+                    <a class="sidebar-button" href="{{ url_for('admin_cat_info') }}">貓咪管理</a>
+                </li>
+                <li>
+                    <a class="sidebar-button" href="{{ url_for('admin_request_review') }}">領養申請審核</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </body>
 </html>

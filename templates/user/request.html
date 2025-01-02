@@ -14,8 +14,92 @@
             <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
         </nav>
     </header>
+    <div class="layout-container">
+        <nav class="sidebar" role="navigation" aria-label="側邊導覽列">
+            <ul >
+                <li>
+                    <button class="sidebar-button" onclick="openModal()">+</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
     <div class="container"></div>
-    <h1>表單管理</h1>
+    <!-- Modal HTML 結構 -->
+    <div class="modal-overlay" id="createModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="modalTitle">新增貓咪</h2>
+                <button 
+                    class="modal-close" 
+                    aria-label="關閉對話框"
+                    onclick="closeModal()">
+                    &times;
+                </button>
+            </header>
+            <div class="modal-body">
+                <form 
+                    action="{{ url_for('manage_request') }}" 
+                    method="POST" 
+                    class="cat-form"
+                    id="catForm">
+                    <div class="form-group">
+                        <label for="cat_name" class="form-label">貓咪名稱</label>
+                        <input 
+                            type="text" 
+                            name="cat_name" 
+                            id="cat_name" 
+                            class="form-input"
+                            required 
+                            aria-required="true"
+                            maxlength="50"
+                            pattern="^[\u4e00-\u9fa5a-zA-Z0-9\s]{1,50}$"
+                            title="請輸入1-50個字的貓咪名稱">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-button">確認新增</button>
+                        <button type="button" class="cancel-button" onclick="closeModal()">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="request_list">
+        <ul>
+            <li><p>hahaha</p></li>
+        </ul>    
+        
+    </div>
+    <script>
+    const modal = document.getElementById('createModal');
+    
+    function openModal() {
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('cat_name').focus();
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = 'auto';
+        document.getElementById('catForm').reset();
+    }
+
+    // 點擊 Modal 外部關閉
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // ESC 鍵關閉 Modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeModal();
+        }
+    });
+    </script>
     
 </body>
 </html>

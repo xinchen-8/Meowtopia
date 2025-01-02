@@ -149,9 +149,10 @@ def get_globalcat(cat_id):
 
 
 # 用戶：領養申請
-@app.route('/user/manage_request')
+@app.route('/user/manage_request', methods=['GET', 'POST'])
 @login_required
 def manage_request():
+    
     return render_template('user/request.html')
 
 # ---------------------------- 管理員路由  -------------------------------
