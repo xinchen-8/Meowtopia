@@ -1,4 +1,5 @@
 from classes import *
+from math import ceil
 
 # 首頁
 @app.route('/')
@@ -72,6 +73,7 @@ def dashboard():
     per_page = 15
     page = request.args.get('page', 1, type=int)
     query = Cat.query
+    global_query = GlobalCat.query
 
     if request.method == 'POST':
         name = request.form.get('cat_name')
@@ -80,20 +82,55 @@ def dashboard():
         
         if name:
             query = query.filter(Cat.name.ilike(f'%{name}%'))
+            global_query = global_query.filter(GlobalCat.name.ilike(f'%{name}%'))
         if gender:
             query = query.filter(Cat.gender == gender)
+            global_query = global_query.filter(GlobalCat.gender == gender)
         if age:
             query = query.filter(Cat.age == int(age))
+            global_query = global_query.filter(GlobalCat.age == int(age))
 
-    cats = query.paginate(page=page, per_page=per_page, error_out=False)
-    return render_template('user/dashboard.html', cats=cats)
+    totalsize = query.count() + global_query.count()
+
+    cats = query.offset((page-1) * per_page).limit(per_page).all()
+
+    change_page = ceil(len(cats) / per_page) if len(cats) >= per_page else 1
+    offset = len(cats) % per_page
+
+    globalcats = []
+    if page >= change_page:
+        globalcats = global_query.offset(
+            per_page * (page - change_page) + (per_page - offset) if page > 1 else 0
+        ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
+
+    #print(page, change_page, cats, globalcats)
+    return render_template('user/dashboard.html', cats=cats, globalcats=globalcats, pageinfo=(page, ceil(totalsize/per_page)))
 
 # 用於獲取貓咪詳細信息
 @app.route('/api/cat/<int:cat_id>')
-def get_cat(cat_id):
+def get_localcat(cat_id):
     # 查詢貓咪及其關聯用戶
     cat = Cat.query.get_or_404(cat_id)
     user = User.query.get_or_404(cat.user_id)  # 通過關聯屬性獲取用戶信息
+    # 返回 JSON 數據，包括貓咪信息和用戶聯繫方式
+    return jsonify({
+        'cat': {
+            'id': cat.id,
+            'name': cat.name,
+            'age': cat.age,
+            'gender': cat.gender,
+            'health_status': cat.health_status,
+            'personality': cat.personality,
+            'img': cat.img#.decode('utf-8') if cat.img else None  # 將圖片轉為 Base64 字符串返回（若需要）
+        },
+        'user_name' : user.username,
+        'user_contact': user.contact  # 包含用戶的聯繫方式
+    })
+    
+@app.route('/api/globalcat/<int:cat_id>')
+def get_globalcat(cat_id):
+    # 查詢貓咪及其關聯用戶
+    cat = GlobalCat.query.get_or_404(cat_id)
     
     # 返回 JSON 數據，包括貓咪信息和用戶聯繫方式
     return jsonify({
@@ -104,10 +141,12 @@ def get_cat(cat_id):
             'gender': cat.gender,
             'health_status': cat.health_status,
             'personality': cat.personality,
-            'img': cat.img.decode('utf-8') if cat.img else None  # 將圖片轉為 Base64 字符串返回（若需要）
+            'img': cat.img#.decode('utf-8') if cat.img else None  # 將圖片轉為 Base64 字符串返回（若需要）
         },
-        'user_contact': user.contact  # 包含用戶的聯繫方式
+        'link_contact': cat.linker,
+        'src': cat.src
     })
+
 
 # 用戶：領養申請
 @app.route('/user/manage_request')

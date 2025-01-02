@@ -69,6 +69,42 @@
                         </div>
                     </div>
                 {% endfor %}
+
+                <div class="card-grid">
+                {% for cat in cats.items %}
+                    <div class="card">
+                        <div class="card-image">
+                            <img src="/api/placeholder/280/200" alt="{{ cat.name }}">
+                            <div class="card-favorite">♡</div>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title">{{ cat.name }}</h2>
+                            <div class="card-tags">
+                                <span class="tag">{{ cat.age }}歲</span>
+                                <span class="tag">{{ cat.gender }}</span>
+                            </div>
+                            <p class="card-description">{{ cat.description }}</p>
+                            <button class="card-button" data-cat-id="{{ cat.id }}">了解更多</button>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% for cat in globalcats.items %}
+                    <div class="card">
+                        <div class="card-image">
+                            <img src="/api/placeholder/280/200" alt="{{ cat.name }}">
+                            <div class="card-favorite">♡</div>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title">{{ cat.name }}</h2>
+                            <div class="card-tags">
+                                <span class="tag">{{ cat.age }}歲</span>
+                                <span class="tag">{{ cat.gender }}</span>
+                            </div>
+                            <p class="card-description">{{ cat.description }}</p>
+                            <button class="card-button" data-cat-id="{{ cat.id }}">了解更多</button>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
 
             <!-- 分頁按鈕 -->

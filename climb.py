@@ -47,7 +47,7 @@ def extract_cat_element(soup):
         except AttributeError:
             print("Error parsing a cat card")
         else:
-            cats.append((name, img_url, detail))
+            cats.append((name, img_url, detail_url, detail))
     return cats
 
 def make_package(cats):
@@ -56,12 +56,13 @@ def make_package(cats):
         try:
             new_cat = GlobalCat(
                 name = c[0],
-                age = c[2]['Age'],
-                gender = c[2]['Gender'],
+                age = c[3]['Age'],
+                gender = c[3]['Gender'],
                 health_status = 'Unknown',
                 personality = 'Unknown',
-                img = c[1]
-                #adoption_status = 'not yet'
+                img = c[1],
+                linker = c[2],
+                src = 'catwelfare'
             )
         except: print('Error pckt')
         else:
