@@ -112,7 +112,6 @@ VALUES ('admin', 'scrypt:32768:8:1$nmV9LvPJFOhQrYdD$e290620bc07bde8204a81431cf30
         - 貓咪資料（**貓咪表需要的**）
         - 申請原因
         - 申請日期
-        - 申請狀態：-1未通過，0等待審核，1通過等待領養，2通過且成功被領養
 ```
 -- 全球貓咪表 (global_cats)
 CREATE TABLE global_cats (
@@ -160,7 +159,6 @@ CREATE TABLE requests (
     cat_personality TEXT,                 -- 貓咪性格
     reason TEXT NOT NULL,                 -- 申請原因
     request_date DATE DEFAULT CURRENT_DATE, -- 申請日期
-    status SMALLINT DEFAULT 0             -- 申請狀態：-1未通過，0等待審核，1通過等待領養，2通過且成功被領養
 );
 ```
 ---

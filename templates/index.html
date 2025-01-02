@@ -6,6 +6,37 @@
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <title>喵托邦 - 貓咪領養平台</title>
+    <script>
+        let hasScrolledPastThreshold = false; // 避免多次觸發
+
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero');
+            const scrollPosition = window.scrollY;
+
+            if (scrollPosition > 200 && !hasScrolledPastThreshold) {
+                // 滾動超過臨界值，隱藏 hero
+                hasScrolledPastThreshold = true; 
+                hero.style.transform = `translateY(-100%)`;
+                hero.style.opacity = '0';
+                hero.style.transition = 'transform 1s ease, opacity 1s ease';
+
+                // 平滑滾動到主內容
+                const mainContent = document.querySelector('.container');
+                mainContent.scrollIntoView({ behavior: 'smooth' });
+            } else if (scrollPosition <= 180 && hasScrolledPastThreshold) {
+                // 當滾動回時恢復 hero
+                hasScrolledPastThreshold = false;
+                hero.style.transform = `translateY(0)`;
+                hero.style.opacity = '1';
+                hero.style.transition = 'transform 0.8s ease, opacity 0.8s ease';
+                // 平滑滾動到主內容
+                const mainContent = document.querySelector('.hero');
+                mainContent.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+
+    </script>
 </head>
 <body>
     <header class="header">
@@ -47,9 +78,47 @@
             window.location.href = redirectUrl;
         }
     </script>
-    
     <div class="mascot">
         <img src="{{ url_for('static', filename='images/mascot.png') }}" alt="喵托邦吉祥物" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    <div class="container">
+        <h2>Featured Cats</h2>
+        <div id="image-container" class="image-container">
+            <button id="prev" class="carousel-btn"> 《 </button>
+            <img id="current-image" src="{{ url_for('static', filename='images/photo1.jpg') }}" alt="Image">
+            <button id="next" class="carousel-btn"> 》 </button>
+             
+        </div>
+        <script>
+            // 定義圖片列表 (將 Flask 的路徑插入為靜態數據)
+            const images = [
+                "{{ url_for('static', filename='images/photo1.jpg') }}",
+                "{{ url_for('static', filename='images/photo2.jpg') }}",
+                "{{ url_for('static', filename='images/photo3.jpg') }}"
+            ];
+            let currentIndex = 0;
+            const currentImage = document.getElementById('current-image');
+            const prevButton = document.getElementById('prev');
+            const nextButton = document.getElementById('next');
+    
+            function updateImage() {
+                currentImage.src = images[currentIndex];
+            }
+    
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                updateImage();
+            });
+    
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                updateImage();
+            });
+        </script>
+        
+        <h2>Our story</h2>
+        <p></p>
+        
     </div>
 </body>
 </html>

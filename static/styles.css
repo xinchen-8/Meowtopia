@@ -3,8 +3,6 @@
     --primary-dark: #ff6600;
     --text-light: #FFE4B5;
     --background: #fff5e6;
-    --background_ad: #cae2fa;
-    --a: #0773FF;
 }
 
 /* 重置所有元素的預設樣式 */
@@ -35,8 +33,6 @@ body {
     z-index: 1000;
 }
 
-.header-admin {
-    background-color: var(--a);
 }
 
 /* 網站 Logo 樣式 */
@@ -67,7 +63,6 @@ body {
     border-radius: 25px;
     transition: all 0.3s;
     font-weight: 500;
-    display: inline-block; /* 確保 button 和 a 的顯示方式一致 */
 }
 
 .auth-buttons a:hover,
@@ -75,7 +70,6 @@ body {
     background: white;
     color: var(--primary);
 }
-
 
 /* Hero 區域樣式 - 網站主要視覺焦點 */
 .hero {
@@ -86,7 +80,8 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 2rem;
+    overflow: hidden;
+    transition: all 0.3s ease-out; /* 平滑過渡效果 */
 }
 
 /* Hero 內容區塊樣式 */
@@ -220,7 +215,6 @@ body {
 /* 容器樣式 */
 .container {
     max-width: 1200px;
-    margin: 0 auto;
     padding: 20px;
 }
 
@@ -257,7 +251,6 @@ body {
     color: #333;
 }
 
-/* Modal 基本樣式 */
 /* Modal 基礎動畫 */
 @keyframes modalFadeIn {
     from { opacity: 0; transform: scale(0.95); }
@@ -488,7 +481,7 @@ body {
 
 .search-button {
     padding: 12px 24px;
-    background: #4A90E2;
+    background: var(--primary-admin);
     color: white;
     border: none;
     border-radius: 12px;
@@ -517,14 +510,9 @@ body {
 
 /* Sidebar */
 .sidebar {
-    height: 100vh; 
-    width: 220px;
     position: fixed;
     top: 70px; /* 頂部導航欄高度 */
     left: 0;
-    background-color: #f1f5f8; 
-    border-right: 1px solid #ddd; 
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1); 
     padding-top: 20px; 
     z-index: 100; 
     transition: width 0.3s ease; 
@@ -534,22 +522,12 @@ body {
 .sidebar-button {
     display: block; /* 獨立區塊 */
     text-decoration: none; /* 移除預設連結樣式 */
-    color: #333; /* 按鈕字體顏色 */
-    background-color: #fff; /* 按鈕背景 */
-    padding: 16px 20px; /* 增加按鈕內邊距 */
-    margin: 10px 15px; /* 增加按鈕間距 */
-    border-radius: 8px; /* 圓角 */
-    font-size: 16px; /* 按鈕文字大小 */
-    text-align: center; /* 文字居中 */
     transition: all 0.3s ease; /* 動態效果 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 按鈕立體感 */
 }
 
 /* 滑鼠懸停效果 */
 .sidebar-button:hover {
-    background: #4A90E2; /* 藍色背景 */
-    color: #fff; /* 文字顏色改為白色 */
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3); /* 提升陰影立體感 */
 }
 
 /* 活躍狀態的按鈕 */
@@ -560,18 +538,8 @@ body {
     box-shadow: 0 4px 10px rgba(53, 122, 189, 0.4); /* 更強的陰影 */
 }
 
-.with-sidebar .main-content {
-    flex: 1; /* 主内容占据剩余空间 */
-    padding: 20px;
-}
-
-.with-sidebar .search-container,
-.with-sidebar .container {
     margin-left: 220px; /* 增加的宽度，使侧边栏与内容区对齐 */
 }
 
-/* 没有 sidebar 的页面 */
-.no-sidebar .search-container,
-.no-sidebar .container {
-    margin-left: 0;
+}
 }
