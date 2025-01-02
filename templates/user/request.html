@@ -9,97 +9,164 @@
 </head>
 <body>
     <header class="header">
-        <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+        <a class="logo" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/logo_user.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
+            喵托邦
+        </a>
         <nav class="auth-buttons">
             <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
         </nav>
     </header>
-    <div class="layout-container">
-        <nav class="sidebar" role="navigation" aria-label="側邊導覽列">
-            <ul >
-                <li>
-                    <button class="sidebar-button" onclick="openModal()">+</button>
-                </li>
-            </ul>
+    <div class="main-container">
+        <nav class="sidebar">
+            <button class="sidebar-button" onclick="openModal()"> 新增</button>
+            
+            <div class="request-list">
+                <div class="request-item waiting" onclick="openRequestModal(1)">
+                    <span class="status-dot"></span>
+                    <span class="request-text">cat_name</span>
+                </div>
+                <div class="request-item failed" onclick="openRequestModal(2)">
+                    <span class="status-dot"></span>
+                    <span class="request-text">cat_name</span>
+                </div>
+                <div class="request-item pending" onclick="openRequestModal(3)">
+                    <span class="status-dot"></span>
+                    <span class="request-text">cat_name</span>
+                </div>
+                <div class="request-item processing" onclick="openRequestModal(3)">
+                    <span class="status-dot"></span>
+                    <span class="request-text">cat_name</span>
+                </div>
+                <div class="request-item success" onclick="openRequestModal(3)">
+                    <span class="status-dot"></span>
+                    <span class="request-text">cat_name</span>
+                </div>
+            </div>
         </nav>
-    </div>
-    <div class="container"></div>
-    <!-- Modal HTML 結構 -->
-    <div class="modal-overlay" id="createModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
-        <div class="modal-content">
-            <header class="modal-header">
-                <h2 id="modalTitle">新增貓咪</h2>
-                <button 
-                    class="modal-close" 
-                    aria-label="關閉對話框"
-                    onclick="closeModal()">
-                    &times;
-                </button>
-            </header>
-            <div class="modal-body">
-                <form 
-                    action="{{ url_for('manage_request') }}" 
-                    method="POST" 
-                    class="cat-form"
-                    id="catForm">
-                    <div class="form-group">
-                        <label for="cat_name" class="form-label">貓咪名稱</label>
-                        <input 
-                            type="text" 
-                            name="cat_name" 
-                            id="cat_name" 
-                            class="form-input"
-                            required 
-                            aria-required="true"
-                            maxlength="50"
-                            pattern="^[\u4e00-\u9fa5a-zA-Z0-9\s]{1,50}$"
-                            title="請輸入1-50個字的貓咪名稱">
+        <div class="modal-overlay" id="createModal" aria-hidden="true" role="dialog">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <form class="cat-form">
+                    <div class="form-header">
+                        <h2>新增貓咪</h2>
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="submit-button">確認新增</button>
-                        <button type="button" class="cancel-button" onclick="closeModal()">取消</button>
+                    <div class="form-content">
+                        <div class="image-upload">
+                            <div class="upload-icon" id="upload-icon">
+                                <span>+</span>
+                                <span>照片</span>
+                            </div>
+                            <input type="file" accept="image/*" id="cat-image" onchange="showPreview(event)">
+                            <img id="preview" style="display: none;">
+                        </div>
+                        <div class="form-fields">
+                            <div class="form-group">
+                                <label>貓咪名字：</label>
+                                <input type="text" name="cat_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>貓咪年齡：</label>
+                                <input type="text" name="age" required>
+                            </div>
+                            <div class="form-group">
+                                <label>貓咪性別：</label>
+                                <input type="text" name="gender" required>
+                            </div>
+                            <div class="form-group">
+                                <label>貓咪健康狀況：</label>
+                                <textarea name="health status" required></textarea>
+                            </div>
+                        </div>
                     </div>
+                    <button type="submit" class="submit-btn">表單送出</button>
                 </form>
             </div>
         </div>
-    </div>
-    <div class="request_list">
-        <ul>
-            <li><p>hahaha</p></li>
-        </ul>    
-        
+        <!-- Request Modal -->
+        <div class="modal" id="requestModal" aria-hidden="true">
+            <div class="modal-body">
+                <button class="modal-close" onclick="closeRequestModal()">&times;</button>
+                <h2 id="requestName">hahaha</h2>
+                <div class="info-item">
+                    <span class="info-label">年齡：</span>
+                    <span class="info-value" id="modalCatAge"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">性別：</span>
+                    <span class="info-value" id="modalCatGender"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">健康狀況：</span>
+                    <span class="info-value" id="modalCatHealth"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">性格：</span>
+                    <span class="info-value" id="modalCatPersonality"></span>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
-    const modal = document.getElementById('createModal');
-    
-    function openModal() {
-        modal.style.display = 'flex';
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-        document.getElementById('cat_name').focus();
-    }
+        // 預覽圖片
+        function showPreview(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('preview');
+            const uploadIcon = document.getElementById('upload-icon');
 
-    function closeModal() {
-        modal.style.display = 'none';
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = 'auto';
-        document.getElementById('catForm').reset();
-    }
-
-    // 點擊 Modal 外部關閉
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                uploadIcon.style.display = 'none';
+            }
         }
-    });
-
-    // ESC 鍵關閉 Modal
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'flex') {
-            closeModal();
+        function openModal() {
+            const modal = document.getElementById('createModal');
+            modal.style.display = 'flex';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
         }
-    });
+
+        function closeModal() {
+            const modal = document.getElementById('createModal');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openRequestModal(id) {
+            // 關閉之前的 modal（如果有的話）
+            const currentModal = document.querySelector('.modal[aria-hidden="false"]');
+            if (currentModal) {
+                currentModal.style.transform = 'translateX(100%)'; // 隱藏先前的 modal
+                currentModal.setAttribute('aria-hidden', 'true');
+            }
+            const modal = document.getElementById('requestModal');
+            modal.style.transform = 'translateX(0)';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRequestModal() {
+            const modal = document.getElementById('requestModal');
+            modal.style.transform = 'translateX(100%)'; // 隱藏在螢幕右側
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = 'auto'; // 恢復滾動
+        }
+
+        // 點擊 Modal 外部關閉
+        document.getElementById('createModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        });
+
+        // 點擊模態框外部關閉
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
     </script>
-    
 </body>
 </html>

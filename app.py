@@ -163,6 +163,7 @@ def admin_cat_info():
     per_page = 15
     page = request.args.get('page', 1, type=int)
     query = Cat.query
+    global_query = GlobalCat.query
 
     if request.method == 'POST':
         name = request.form.get('cat_name')
@@ -171,13 +172,28 @@ def admin_cat_info():
         
         if name:
             query = query.filter(Cat.name.ilike(f'%{name}%'))
+            global_query = global_query.filter(GlobalCat.name.ilike(f'%{name}%'))
         if gender:
             query = query.filter(Cat.gender == gender)
+            global_query = global_query.filter(GlobalCat.gender == gender)
         if age:
             query = query.filter(Cat.age == int(age))
+            global_query = global_query.filter(GlobalCat.age == int(age))
 
-    cats = query.paginate(page=page, per_page=per_page, error_out=False)
-    return render_template('admin/cat_info.html', cats=cats)
+    totalsize = query.count() + global_query.count()
+
+    cats = query.offset((page-1) * per_page).limit(per_page).all()
+
+    change_page = ceil(len(cats) / per_page) if len(cats) >= per_page else 1
+    offset = len(cats) % per_page
+
+    globalcats = []
+    if page >= change_page:
+        globalcats = global_query.offset(
+            per_page * (page - change_page) + (per_page - offset) if page > 1 else 0
+        ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
+
+    return render_template('admin/cat_info.html', cats=cats, globalcats=globalcats, pageinfo=(page, ceil(totalsize/per_page)))
 
 # 管理員：領養申請審核頁面
 @app.route('/admin/request_review')

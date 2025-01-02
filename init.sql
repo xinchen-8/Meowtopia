@@ -31,7 +31,8 @@ CREATE TABLE users (
     age INT,                              -- 年齡
     gender VARCHAR(10),                   -- 性別   
     contact VARCHAR(255)                  -- 聯絡方式
-    is_admin BOOLEAN NOT NULL
+    is_admin BOOLEAN DEFAULT FALSE
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 記錄創建時間
 );
 
 -- 領養表 (Adoption)
@@ -45,8 +46,12 @@ CREATE TABLE requests (
     cat_personality TEXT,                 -- 貓咪性格
     reason TEXT NOT NULL,                 -- 申請原因
     request_date DATE DEFAULT CURRENT_DATE, -- 申請日期
-    status SMALLINT DEFAULT 0,             -- 申請狀態：-1未通過，0等待審核，1通過等待領養，2通過且成功被領養
+    status SMALLINT DEFAULT 0,             -- 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
     special_hint VARCHAR(255),             -- 特殊提示：未通過時使用這裡告知未通過原因
     adopter_id INT REFERENCES users(id),  -- 領養者
     adopter_date DATE DEFAULT CURRENT_DATE-- 領養日期
 );
+
+-- 創建管理員賬號(密碼：meowtopia)
+INSERT INTO users (username, password_hash, is_admin) 
+VALUES ('admin', 'scrypt:32768:8:1$nmV9LvPJFOhQrYdD$e290620bc07bde8204a81431cf30804349ff7c283e89ae2784a0ab7aaa004742c8ad222b79da0dc314807307c78f48aa0c2c47f45142646674f1d5124a973ce2', TRUE);

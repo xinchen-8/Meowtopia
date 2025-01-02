@@ -7,22 +7,24 @@
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
 </head>
 <body class="admin">
-    <div class="layout">
-        <header class="header">
-            <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+    <header class="header">
+        <a class="logo" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/logo_admin.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
+            喵托邦
+        </a>
             <nav class="auth-buttons">
                 <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
             </nav>
-        </header>
+    </header>
 
         <!-- Sidebar -->
         <nav class="sidebar">
             <ul>
                 <li>
-                    <a class="sidebar-button" href="{{ url_for('admin_cat_info') }}">貓咪管理</a>
+                    <a class="sidebar-page" href="{{ url_for('admin_cat_info') }}">貓咪管理</a>
                 </li>
                 <li>
-                    <a class="sidebar-button" href="{{ url_for('admin_request_review') }}">領養申請審核</a>
+                    <a class="sidebar-page" href="{{ url_for('admin_request_review') }}">領養申請審核</a>
                 </li>
             </ul>
         </nav>

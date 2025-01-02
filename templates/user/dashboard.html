@@ -9,7 +9,10 @@
 </head>
 <body>
     <header class="header">
-        <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+        <a class="logo" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/logo_user.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
+            喵托邦
+        </a>
         <nav class="auth-buttons">
             <a href="{{ url_for('manage_request') }}" class="auth-buttons">領養表單</a>
             <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
@@ -101,10 +104,6 @@
                         <span class="info-label">性別：</span>
                         <span class="info-value" id="modalCatGender"></span>
                     </div>
-                    <!-- <div class="info-item">
-                        <span class="info-label">品種：</span>
-                        <span class="info-value" id="modalCatBreed"></span>
-                    </div> -->
                     <div class="info-item">
                         <span class="info-label">健康狀況：</span>
                         <span class="info-value" id="modalCatHealth"></span>
@@ -123,7 +122,6 @@
         </div>
     </div>
 
-    <!-- 修改 JavaScript -->
     <script>
     async function openModal(catId, isGlobal) {
         try {

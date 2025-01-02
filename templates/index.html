@@ -40,7 +40,10 @@
 </head>
 <body>
     <header class="header">
-        <a class="logo" href="{{ url_for('home') }}">喵托邦</a>
+        <a class="logo" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/logo_user.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
+            喵托邦
+        </a>
         <nav class="auth-buttons">
             {% if current_user.is_authenticated %}
                 <!-- 已登入時顯示登出按鈕 -->
