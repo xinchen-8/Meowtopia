@@ -26,7 +26,7 @@ CREATE TABLE global_cats (
 CREATE TABLE local_cats (
     id SERIAL PRIMARY KEY,                -- 唯一標識
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(50) NOT NULL,           -- 名字
+    name VARCHAR(100) NOT NULL,           -- 名字
     age INT,                              -- 年齡
     gender INT,                           -- 性別
     health_status VARCHAR(300),           -- 健康狀況（如疫苗、絕育等）
@@ -46,7 +46,7 @@ CREATE TABLE requests (
     img VARCHAR(300),                     -- 圖片網址
     reason TEXT NOT NULL,                 -- 申請原因
     status SMALLINT DEFAULT 0,            -- 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
-    special_hint VARCHAR(255),            -- 特殊提示：未通過時使用這裡告知未通過原因
+    special_hint VARCHAR(300),            -- 特殊提示：未通過時使用這裡告知未通過原因
     adopter_id INT REFERENCES users(id)  -- 領養者
 );
 

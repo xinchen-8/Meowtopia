@@ -1,5 +1,5 @@
 from classes import *
-from math import ceil
+from math import ceil, floor
 
 # 首頁
 @app.route('/')
@@ -99,15 +99,18 @@ def dashboard():
             global_query = global_query.filter(GlobalCat.age == int(age) or GlobalCat.age == range_id)
             
     totalsize = query.count() + global_query.count()
+
     cats = query.offset((page-1) * per_page).limit(per_page).all()
 
-    change_page = ceil(len(cats) / per_page) if len(cats) >= per_page else 1
+    change_page = (1 + len(cats) // per_page) if len(cats) >= per_page else 1
     offset = len(cats) % per_page
 
     globalcats = []
+    
     if page >= change_page:
+        print(page, per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0)
         globalcats = global_query.offset(
-            per_page * (page - change_page) + (per_page - offset) if page > 1 else 0
+            per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0
         ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
 
     #print(page, change_page, cats, globalcats)
@@ -191,13 +194,15 @@ def admin_cat_info():
 
     cats = query.offset((page-1) * per_page).limit(per_page).all()
 
-    change_page = ceil(len(cats) / per_page) if len(cats) >= per_page else 1
+    change_page = (1 + len(cats) // per_page) if len(cats) >= per_page else 1
     offset = len(cats) % per_page
 
     globalcats = []
+    
     if page >= change_page:
+        print(page, per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0)
         globalcats = global_query.offset(
-            per_page * (page - change_page) + (per_page - offset) if page > 1 else 0
+            per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0
         ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
 
     return render_template('admin/cat_info.html', cats=cats, globalcats=globalcats, pageinfo=(page, ceil(totalsize/per_page)))
