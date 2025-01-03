@@ -22,20 +22,22 @@
     <div class="search-container">
         <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
             <div class="search-group">
+
                 <label class="search-label" for="cat_name">Cat Name</label>
-                <input type="text" name="cat_name" class="search-input" id="cat_name">
+                <input type="text" name="cat_name" class="search-input" id="cat_name" placeholder="All">
+
             </div>
             <div class="search-group">
                 <label class="search-label" for="cat_gender">Gender</label>
                 <select name="cat_gender" class="search-input" id="cat_gender">
                     <option value="">All</option>
-                    <option value="公">Male</option>
-                    <option value="母">Female</option>
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
                 </select>
             </div>
             <div class="search-group">
                 <label class="search-label" for="cat_age">Age</label>
-                <input type="number" name="cat_age" class="search-input" id="cat_age" min="0">
+                <input type="number" name="cat_age" class="search-input" id="cat_age" min="0" placeholder="All">
             </div>
             <button type="submit" class="search-button">Search</button>
         </form>
@@ -68,8 +70,28 @@
                     <div class="card-content">
                         <h2 class="card-title">{{ cat.name }}</h2>
                         <div class="card-tags">
-                            <span class="tag">{{ cat.age }}years old</span>
-                            <span class="tag">{{ cat.gender }}</span>
+                            <span class="tag">
+                                {% if cat.age == -1 %}
+                                    Unknown
+                                {% elif cat.age == -2 %}
+                                    0~1
+                                {% elif cat.age == -3 %}
+                                    2~3
+                                {% elif cat.age == -4 %}
+                                    4~7
+                                {% else %}
+                                    {{cat.age}}
+                                {% endif %}    
+                                year(s)</span>
+                            <span class="tag">
+                                {% if cat.gender == 1 %}
+                                    Male
+                                {% elif cat.gender == 0 %}
+                                    Female
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                                </span>
                         </div>
                         <p class="card-description">{{ cat.description }}</p>
                         <button class="card-button" data-cat-id="{{ cat.id }}" data-is-Global="1">See More</button>
@@ -131,10 +153,20 @@
                 const response = await fetch(`/api/globalcat/${catId}`);
                 const catData = await response.json();
                 
+                var age = catData.cat.age;
+                if(age==-1) age='Unknown';
+                else if(age==-2) age='0~1';
+                else if(age==-3) age='2~3';
+                else if(age==-4) age='4~7';
+                
+                var gender = catData.cat.gender;
+                if(gender==-1) gender='Unknown';
+                else if(gender==0) gender='Female';
+                else gender='Male';
+
                 document.getElementById('modalCatName').textContent = catData.cat.name;
-                document.getElementById('modalCatAge').textContent = `${catData.cat.age}years old`;
-                document.getElementById('modalCatGender').textContent = catData.cat.gender;
-                //document.getElementById('modalCatBreed').textContent = catData.cat.breed || '未知';  // 若無品種資料可設為 "未知"
+                document.getElementById('modalCatAge').textContent = `${age} year(s)`;
+                document.getElementById('modalCatGender').textContent = gender;
                 document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
                 document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
 
@@ -148,11 +180,22 @@
                 const response = await fetch(`/api/cat/${catId}`);
                 const catData = await response.json();
 
+                var age = catData.cat.age;
+                if(age==-1) age='Unknown';
+                else if(age==-2) age='0~1';
+                else if(age==-3) age='2~3';
+                else if(age==-4) age='4~7';
+                
+                var gender = catData.cat.gender;
+                if(gender==-1) gender='Unknown';
+                else if(gender==0) gender='Female';
+                else gender='Male';
+
                 // 更新 Modal 內容
                 document.getElementById('modalCatName').textContent = catData.cat.name;
-                document.getElementById('modalCatAge').textContent = `${catData.cat.age}years old`;
-                document.getElementById('modalCatGender').textContent = catData.cat.gender;
-                //document.getElementById('modalCatBreed').textContent = catData.cat.breed || '未知';  // 若無品種資料可設為 "未知"
+
+                document.getElementById('modalCatAge').textContent = `${age} year(s)`;
+                document.getElementById('modalCatGender').textContent = gender;
                 document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
                 document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
 
