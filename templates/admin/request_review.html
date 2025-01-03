@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrator-Audit backend</title>
+    <title>Meowtopia - Admin</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/logo_admin.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
 </head>
 <body class="admin">
@@ -27,12 +29,6 @@
                     <a class="sidebar-page" href="{{ url_for('admin_request_review') }}">Application review</a>
                 </li>
             </ul>
-            <div class="function-buttons">
-                <br>
-                <br>
-                <button class="sidebar-button" onclick="openAddNewModal()">+</button>
-                <button class="sidebar-button" onclick="">Refetch</button>
-            </div>
         </nav>
         <!-- 搜尋+card+分頁 -->
         <div class="content-container">
@@ -67,7 +63,40 @@
                     <button type="submit" class="search-button">Search</button>
                 </form>
             </div>
-            
+            <div class="request-table">
+                <h2>Requests</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cat Name</th>
+                            <th>Applicant</th>
+                            <th>Application Status</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>hahaha</td>
+                            <td>hahaha</td>
+                            <td>hahaha</td>
+                            <td><span class="request-item waiting status-dot"></span></td>
+                            <td><button class="card-button" data-cat-id="{{ request.cat_id }}" >Review</button></td>
+                        </tr>
+                        {% for request in requests %}
+                        <tr>
+                            <td>{{ request.cat_name }}</td>
+                            <td>{{ request.applicant }}</td>
+                            <td>{{ request.status }}</td>
+                            <td>
+                                <button class="card-button" data-cat-id="{{ request.cat_id }}">Review</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
 
             <!-- 分頁按鈕 -->
             <div class="pagination">

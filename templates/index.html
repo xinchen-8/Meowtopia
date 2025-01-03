@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <title>Meowtopia - Cat adoption platform</title>
+    <title>Meowtopia - Home page</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/logo_admin.png') }}" type="image/png">
     <script>
         let hasScrolledPastThreshold = false; // 避免多次觸發
 
@@ -60,7 +62,7 @@
         <div class="hero-content">
             <h1>Offer stray cats a place filled with love and warmth</h1>
             <p>Connect with adoption opportunities worldwide and grant stray cats a chance for happiness and belonging</p>
-            <button class="cta-button" onclick="redirectAdoptPage()">立即領養</button>
+            <button class="cta-button" onclick="redirectAdoptPage()">Adopt now</button>
         </div>
     </main>
     <script>

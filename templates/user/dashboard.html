@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>喵托邦 - 貓咪領養平台</title>
+    <title>Meowtopia - Dashboard</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/logo_admin.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'cat.css') }}">
 </head>
@@ -53,7 +55,7 @@
                     <div class="card-content">
                         <h2 class="card-title">{{ cat.name }}</h2>
                         <div class="card-tags">
-                            <span class="tag">{{ cat.age }}years old</span>
+                            <span class="tag">{{ cat.age }} years old</span>
                             <span class="tag">{{ cat.gender }}</span>
                         </div>
                         <p class="card-description">{{ cat.description }}</p>
@@ -140,6 +142,9 @@
                     <div class="contact-details">
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button class="modal-button">I want adoption</button>
+                </div>
             </div>
         </div>
     </div>
@@ -167,6 +172,7 @@
                 document.getElementById('modalCatName').textContent = catData.cat.name;
                 document.getElementById('modalCatAge').textContent = `${age} year(s)`;
                 document.getElementById('modalCatGender').textContent = gender;
+
                 document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
                 document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
 
@@ -193,7 +199,6 @@
 
                 // 更新 Modal 內容
                 document.getElementById('modalCatName').textContent = catData.cat.name;
-
                 document.getElementById('modalCatAge').textContent = `${age} year(s)`;
                 document.getElementById('modalCatGender').textContent = gender;
                 document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
@@ -201,8 +206,8 @@
 
                 // 更新聯絡資訊
                 document.querySelector('.contact-details').innerHTML = `
-                    <p>Name:${catData.user_name}</p>
-                    <p>Contact Info:${catData.user_contact}</p>
+                    <p>Name: ${catData.user_name}</p>
+                    <p>Contact Number: ${catData.user_contact}</p>
                 `;
             }
 
