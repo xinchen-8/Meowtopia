@@ -4,10 +4,10 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
-
-
 BASE_URL_UP = "https://www.petfinder.com/search/?page="
 BASE_URL_DN = "&limit[]=40&status=adoptable&token=Zn0i6XWR_gq93HFIoYujKEQxdwKSMQNVMJJp551gI98&distance[]=Anywhere&type[]=cats&sort[]=nearest&location_slug[]=gu%2Fpiti-municipality&include_transportable=true"
+genderlist = ['Female', 'Male']
+
 headers = {
     "accept": "application/json, text/plain, */*",
     "accept-encoding": "gzip, deflate, br, zstd",
@@ -29,6 +29,7 @@ cookies = {
     "optimizelyEndUserId": "oeu1735714351933r0.7128938969752034",
     "user_location_slug": "gu/piti-municipality",
 }
+
 
 def fetch_api(url):
     url_list = []
@@ -85,14 +86,29 @@ def make_package(cat):
     
     print(cat)
     try:
+        try:
+            if(cat[3]['Age']=='Kitten'):
+                age = -2
+            elif(cat[3]['Age']=='Young'):
+                age = -3
+            elif(cat[3]['Age']=='Adult'):
+                age = -4
+            elif(cat[3]['Age']=='Adult'):
+                age = 0
+            else:
+                age = -1
+        except:
+            age = -1
+            
         new_cat = GlobalCat(
             name = cat[0],
-            age = cat[3]['Age'],
-            gender = cat[3]['Gender'],
+            age = age,
+            gender = genderlist.index(cat[3]['Gender']) if cat[3]['Gender'] in genderlist else -1,
             health_status = cat[3]['Health'] if 'Health' in cat[3] else 'Unknown',
             personality = cat[3]['Characteristics'] if 'Characteristics' in cat[3] else 'Unknown',
             img = cat[1],
-            detail_url = cat[2]
+            linker = cat[2],
+            src = 'petfinder'
             )
     except: print('Error pckt')
     else:
@@ -120,9 +136,10 @@ def do():
                     print(f"Error committing page: {e}")
 
 
-def climb_petfinder(): #main
-    with app.app_context():
-        db.session.query(GlobalCat).delete()
-        db.session.commit()
+def climb_petfinder(delete): #main
+    if delete:
+        with app.app_context():
+            db.session.query(GlobalCat).delete()
+            db.session.commit()
     do()
-climb_petfinder()
+climb_petfinder(True)

@@ -43,8 +43,8 @@ def login_signUp():
                 user = User(
                     username=username, 
                     contact=contact, 
-                    age=age,  
-                    gender=gender
+                    age=int(age),  
+                    gender= 1 if gender=='男' else 0
                 )
                 user.set_password(password)
                 db.session.add(user)
@@ -84,14 +84,21 @@ def dashboard():
             query = query.filter(Cat.name.ilike(f'%{name}%'))
             global_query = global_query.filter(GlobalCat.name.ilike(f'%{name}%'))
         if gender:
+            gender = 0 if gender=='Female' else 1
             query = query.filter(Cat.gender == gender)
             global_query = global_query.filter(GlobalCat.gender == gender)
         if age:
+            age_range = [(range(-1,-1),-1), (range(0,2), -2), (range(2,4),-3), (range(4,8),-4)]
             query = query.filter(Cat.age == int(age))
-            global_query = global_query.filter(GlobalCat.age == int(age))
-
+            range_id = -1
+        
+            for i in age_range:
+                if int(age) in i[0]:    
+                    range_id = i[1]
+                    break                        
+            global_query = global_query.filter(GlobalCat.age == int(age) or GlobalCat.age == range_id)
+            
     totalsize = query.count() + global_query.count()
-
     cats = query.offset((page-1) * per_page).limit(per_page).all()
 
     change_page = ceil(len(cats) / per_page) if len(cats) >= per_page else 1
