@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}">
-    <title>登入 / 註冊</title>
+    <title>Meowtopia- Login / signup</title>
 
     <script>
         function showTab(tabId) {
@@ -31,15 +31,15 @@
     <header class="header">
         <a class="logo" href="{{ url_for('home') }}">
             <img src="{{ url_for('static', filename='images/logo_user.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
-            喵托邦
+            <img src="{{ url_for('static', filename='images/logo_text.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
         </a>
     </header>
     
 
     <div class="tabs">
         <!-- 頁面加載時，根據後端傳遞的 tab 值設置初始 active 樣式 -->
-        <button class="tab-button {% if tab == 'login' %}active{% endif %}" onclick="showTab('login')">登入</button>
-        <button class="tab-button {% if tab == 'signup' %}active{% endif %}" onclick="showTab('signup')">註冊</button>
+        <button class="tab-button {% if tab == 'login' %}active{% endif %}" onclick="showTab('login')">Login</button>
+        <button class="tab-button {% if tab == 'signup' %}active{% endif %}" onclick="showTab('signup')">Sign Up</button>
     </div>
     <!-- 這裡是錯誤提示的部分-->
     {% with messages = get_flashed_messages(with_categories=True) %}
@@ -54,14 +54,14 @@
         <div class="form-container">
             <form action="{{ url_for('login_signUp', tab='login') }}" method="post">
                 <div class="form-group">
-                    <label>帳號：</label>
+                    <label>Username:</label>
                     <input type="text" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label>密碼：</label>
+                    <label>Password:</label>
                     <input type="password" name="password" required>
                 </div>
-                <button type="submit" class="submit-btn">登入</button>
+                <button type="submit" class="submit-btn">Login</button>
             </form>
         </div>
     </div>
@@ -71,34 +71,34 @@
         <div class="form-container">
             <form action="{{ url_for('login_signUp', tab='signup') }}" method="post">
                 <div class="form-group">
-                    <label>帳號：</label>
+                    <label>Username</label>
                     <input type="text" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="age">年齡</label>
+                    <label for="age">Age</label>
                     <input type="number" id="age" name="age" class="form-control" min="0">
                 </div>
                 <div class="form-group">
-                    <label for="gender">性別</label>
+                    <label for="gender">Gender</label>
                     <select id="gender" name="gender" class="form-control">
-                        <option value="male">男</option>
-                        <option value="female">女</option>
-                        <option value="other">其他</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Others</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>密碼：</label>
+                    <label>Password:</label>
                     <input type="password" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label>確認密碼：</label>
+                    <label>Confirm Password:</label>
                     <input type="password" name="confirm_password" required>
                 </div>
                 <div class="form-group">
-                    <label>手機號碼：</label>
+                    <label>Contact Number:</label>
                     <input type="number" name="contact" required>
                 </div>
-                <button type="submit" class="submit-btn">註冊</button>
+                <button type="submit" class="submit-btn">Sign Up</button>
             </form>
         </div>
     </div>

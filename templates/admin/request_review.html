@@ -3,31 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理員-審核後台</title>
+    <title>Administrator-Audit backend</title>
     <link rel="stylesheet" href="{{ url_for('static', filename = 'styles.css') }}">
 </head>
 <body class="admin">
     <header class="header">
         <a class="logo" href="{{ url_for('home') }}">
             <img src="{{ url_for('static', filename='images/logo_admin.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
-            喵托邦
+            <img src="{{ url_for('static', filename='images/logo_text.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
         </a>
             <nav class="auth-buttons">
-                <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
+                <a href="{{ url_for('logout') }}" class="auth-buttons">Logout</a>
             </nav>
     </header>
-
+    <div class="main-container">
         <!-- Sidebar -->
         <nav class="sidebar">
             <ul>
                 <li>
-                    <a class="sidebar-page" href="{{ url_for('admin_cat_info') }}">貓咪管理</a>
+                    <a class="sidebar-page" href="{{ url_for('admin_cat_info') }}">Manage</a>
                 </li>
                 <li>
-                    <a class="sidebar-page" href="{{ url_for('admin_request_review') }}">領養申請審核</a>
+                    <a class="sidebar-page" href="{{ url_for('admin_request_review') }}">Application review</a>
                 </li>
             </ul>
+            <div class="function-buttons">
+                <br>
+                <br>
+                <button class="sidebar-button" onclick="openAddNewModal()">+</button>
+                <button class="sidebar-button" onclick="">Refetch</button>
+            </div>
         </nav>
+        <!-- 搜尋+card+分頁 -->
+        <div class="content-container">
+            <div class="search-container">
+                <form method="POST" action="{{ url_for('admin_request_review') }}" class="search-form">
+                    <div class="search-group">
+                        <label class="search-label" for="cat_name">Cat Name</label>
+                        <input type="text" name="cat_name" class="search-input" id="cat_name">
+                    </div>
+                    <div class="search-group">
+                        <label class="search-label" for="cat_gender">Gender</label>
+                        <select name="cat_gender" class="search-input" id="cat_gender">
+                            <option value="">All</option>
+                            <option value="公">Male</option>
+                            <option value="母">Female</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <label class="search-label" for="cat_age">Age</label>
+                        <input type="number" name="cat_age" class="search-input" id="cat_age" min="0">
+                    </div>
+                    <div class="search-group">
+                        <label class="search-label" for="cat_age">Age</label>
+                        <select name="cat_gender" class="search-input" id="cat_gender">
+                            <option value="-1">Review failed</option>
+                            <option value="0">Waiting for review</option>
+                            <option value="1">Waiting for adoption</option>
+                            <option value="2">Adoption application in progress</option>
+                            <option value="3">Adoption successful</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="search-button">Search</button>
+                </form>
+            </div>
+            
+
+            <!-- 分頁按鈕 -->
+            <div class="pagination">
+            </div>
+            <!-- Modal HTML 結構 -->
+            <div class="modal-overlay" id="catModal">
+                <div class="modal-content">
+                    <button class="modal-close">&times;</button>
+                    <div class="modal-body">
+                        <div class="cat-info">
+                            <h2 id="modalCatName"></h2>
+                            <div class="info-item">
+                                <span class="info-label">Age:</span>
+                                <span class="info-value" id="modalCatAge"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Gender:</span>
+                                <span class="info-value" id="modalCatGender"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Health Status:</span>
+                                <span class="info-value" id="modalCatHealth"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Personality:</span>
+                                <span class="info-value" id="modalCatPersonality"></span>
+                            </div>
+                        </div>
+                        <div class="contact-info">
+                            <h3>Contact Info</h3>
+                            <div class="contact-details">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- 修改 JavaScript -->
+    <script>
+    async function openModal(catId) {
+        try {
+            // 獲取貓咪詳細信息
+            const response = await fetch(`/api/cat/${catId}`);
+            const catData = await response.json();
+
+            // 更新 Modal 內容
+            document.getElementById('modalCatName').textContent = catData.cat.name;
+            document.getElementById('modalCatAge').textContent = `${catData.cat.age}years old`;
+            document.getElementById('modalCatGender').textContent = catData.cat.gender;
+            document.getElementById('modalCatBreed').textContent = catData.cat.breed || 'Unknown';  // 若無品種資料可設為 "未知"
+            document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
+            document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
+
+            // 更新聯絡資訊
+            document.querySelector('.contact-details').innerHTML = `
+                <p>Name:${catData.user_contact}</p>
+                <p>Contact Info:${catData.user_contact}</p>
+            `;
+
+            // 顯示 Modal
+            const modal = document.getElementById('catModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        } catch (error) {
+            console.error('Error fetching cat details:', error);
+            alert('Unable to obtain cat information, please try again later');
+        }
+    }
+
+    // 關閉 Modal
+    function closeModal() {
+        const modal = document.getElementById('catModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // 關閉按鈕
+    document.querySelector('.modal-close').addEventListener('click', closeModal);
+
+    // 綁定卡片上的按鈕
+    document.querySelectorAll('.card-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const catId = button.dataset.catId;
+            openModal(catId);
+        });
+    });
+    </script>
 </body>
 </html>

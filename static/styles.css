@@ -1,8 +1,8 @@
 :root {
     --primary: #ff8c1a;
     --primary-dark: #ff6600;
-    --primary-admin: #0468ff;
-    --primary-admin-dark: #084aaf;
+    --primary-admin: #4A90E2;
+    --primary-admin-dark: #0651c1af;
     --text-light: #FFE4B5;
     --background: #fff5e6;
     --background_ad: #D7F6FF;
@@ -15,6 +15,19 @@
     box-sizing: border-box;
 }
 
+/* 動態背景動畫 */
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 /* 網站基礎樣式設定 */
 body {
     font-family: "Microsoft JhengHei", Arial, sans-serif;
@@ -22,19 +35,28 @@ body {
     padding-top: 70px; /* 預留空間給 header */
 }
 body.admin {
+    background: none;
     background-color: var(--background_ad);
+    animation: gradientBG 15s ease infinite;
+    background-size: 400% 400%;
+}
+body.dashboard {
+    background: linear-gradient(45deg, #e0c3fc, #8ec5fc);
+    animation: gradientBG 15s ease infinite;
+    background-size: 400% 400%;
 }
 
 /* 頂部導航欄樣式 */
 .header {
     background-color: var(--primary);
-    padding: 0.8rem 2rem;
+    padding: 0.84rem 2rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: fixed;
     top: 0;
+    height: 70px;
     width: 100%;
     z-index: 1000;
 }
@@ -56,7 +78,7 @@ body.admin {
     transform: scale(1.05);
 }
 
-/* -----首頁登入/註冊按鈕區域樣式---- */
+/* ----- 登入/註冊按鈕區域樣式---- */
 .auth-buttons {
     display: flex;
     gap: 1.2rem;
@@ -109,7 +131,7 @@ body.admin {
 
 /* 主標題樣式 */
 .hero-content h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
+    font-size: clamp(1.5rem, 5vw, 2rem);
     margin-bottom: 1.5rem;
     color: var(--text-light);
 }
@@ -208,19 +230,18 @@ body.admin {
 }
 
 /* --------------- 容器樣式 ------------- */
-.container {
-    max-width: 1200px;
-    padding: 20px;
-    margin: 0 auto;
-    border-radius: 12px;
-    text-align: center;
-}
 .container h2 {
     font-size: 32px;
     color: #000000;
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+.card-container {
+    max-width: 1200px;
+    padding: 20px;
+    margin: 0 auto;
+    border-radius: 12px;
 }
 /* Image Carousel */
 .image-container {
@@ -234,6 +255,10 @@ body.admin {
     box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
 }
 
+.content-container {
+    flex: 1;
+}
+/* --------------- 照片切換按鈕 ------------- */
 .carousel-btn {
     position: absolute;
     top: 50%;
@@ -266,7 +291,7 @@ body.admin {
     border-radius: 5px;
 }
 
-/* 多分頁控制樣式 */
+/* --------------- 多分頁控制樣式 ---------- */
 .pagination {
     display: flex;
     justify-content: center;
@@ -299,6 +324,7 @@ body.admin {
     color: #333;
 }
 
+/* ---------彈出-瞭解更多------ */
 /* Modal 基礎動畫 */
 @keyframes modalFadeIn {
     from { opacity: 0; transform: scale(0.95); }
@@ -309,8 +335,6 @@ body.admin {
     from { opacity: 0; }
     to { opacity: 1; }
 }
-
-/* ---------彈出-瞭解更多------ */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -503,6 +527,7 @@ body.admin {
 /* --------------搜索表單容器------------ */
 .search-container {
     height: min-content;
+    width: 100%;
     padding: 20px 40px;
     background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -580,30 +605,36 @@ body.admin {
     top: 70px; /* 頂部導航欄高度 */
     left: 0;
     background-color: rgba(0, 0, 0, 0.08); 
-    border-right: 1px solid #ddd;
     padding: 1.5rem;
     z-index: 100; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 水平居中 */
+    display: block;
     transition: width 0.3s ease; 
     box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box; /* 確保寬度不受 padding 影響 */
 }
 
 .admin .sidebar {
-    display: block;
     width: 220px;
     min-width: 220px;
-    padding-top: 20px;
     padding: 0%;
-    box-sizing: border-box; /* 確保寬度不受 padding 影響 */
 }
 
 li {
     list-style-type: none;
 }
+
+.function-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+}
+
 /* sidebar 按鈕樣式 */
 .sidebar-button {
+    margin: 0 auto;
     width: 90%;
     padding: 1rem;
     text-decoration: none; /* 移除預設連結樣式 */
@@ -645,12 +676,16 @@ li {
     text-align: center;
     color: #ffffff;
     font-size: 16px;
-    background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* 內部陰影，增加立體感 */
-    transition: background-color 0.3s; /* 平滑過渡 */
-    border: 1px solid #ddd; /* 增加邊框 */
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.08);
+    transition: background-color 0.3s; 
+    border: 1px solid #ddd;
 }
 
+.sidebar-page:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
 
 /* 申請狀態欄 */
 .request-list {
@@ -658,6 +693,7 @@ li {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin: 0 auto;
     text-align: center;
 }
 

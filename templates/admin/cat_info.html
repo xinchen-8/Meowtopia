@@ -11,10 +11,10 @@
     <header class="header">
         <a class="logo" href="{{ url_for('home') }}">
             <img src="{{ url_for('static', filename='images/logo_admin.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
-            喵托邦
+            <img src="{{ url_for('static', filename='images/logo_text.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
         </a>
         <nav class="auth-buttons">
-            <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
+            <a href="{{ url_for('logout') }}" class="auth-buttons">Logout</a>
         </nav>
     </header>
     <div class="main-container">
@@ -22,139 +22,120 @@
         <nav class="sidebar">
             <ul>
                 <li>
-                    <a class="sidebar-page" href="{{ url_for('admin_cat_info') }}">貓咪管理</a>
+                    <a class="sidebar-page" href="{{ url_for('admin_cat_info') }}">Manage</a>
                 </li>
                 <li>
-                    <a class="sidebar-page" href="{{ url_for('admin_request_review') }}">領養申請審核</a>
+                    <a class="sidebar-page" href="{{ url_for('admin_request_review') }}">Application review</a>
                 </li>
             </ul>
-            <div>
-                <button class="sidebar-button" onclick="openAddNewModal()"> 新增</button>
-                <button class="sidebar-button" onclick="">refresh</button>
+            <div class="function-buttons">
+                <br>
+                <br>
+                <button class="sidebar-button" onclick="openAddNewModal()">+</button>
+                <button class="sidebar-button" onclick="">Refetch</button>
             </div>
         </nav>
 
-        <!-- 搜尋表單 -->
-        <div class="search-container">
-            <form method="POST" action="{{ url_for('admin_cat_info') }}" class="search-form">
-                <div class="search-group">
-                    <label class="search-label" for="cat_name">貓咪名稱</label>
-                    <input type="text" name="cat_name" class="search-input" id="cat_name">
-                </div>
-                <div class="search-group">
-                    <label class="search-label" for="cat_gender">性別</label>
-                    <select name="cat_gender" class="search-input" id="cat_gender">
-                        <option value="">全部</option>
-                        <option value="公">公</option>
-                        <option value="母">母</option>
-                    </select>
-                </div>
-                <div class="search-group">
-                    <label class="search-label" for="cat_age">年齡</label>
-                    <input type="number" name="cat_age" class="search-input" id="cat_age" min="0">
-                </div>
-                <button type="submit" class="search-button">搜尋</button>
-            </form>
-        </div>
-        <div class="container">
-            <div class="card-grid">
-                {% for cat in cats.items %}
-                    <div class="card">
-                        <div class="card-image">
-                            <img src="/api/placeholder/280/200" alt="{{ cat.name }}">
-                            <div class="card-favorite">♡</div>
-                        </div>
-                        <div class="card-content">
-                            <h2 class="card-title">{{ cat.name }}</h2>
-                            <div class="card-tags">
-                                <span class="tag">{{ cat.age }}歲</span>
-                                <span class="tag">{{ cat.gender }}</span>
-                            </div>
-                            <p class="card-description">{{ cat.description }}</p>
-                            <button class="card-button" data-cat-id="{{ cat.id }}">了解更多</button>
-                        </div>
+        <!-- 搜尋+card+分頁 -->
+        <div class="content-container">
+            <div class="search-container">
+                <form method="POST" action="{{ url_for('admin_cat_info') }}" class="search-form">
+                    <div class="search-group">
+                        <label class="search-label" for="cat_name">Cat Name</label>
+                        <input type="text" name="cat_name" class="search-input" id="cat_name">
                     </div>
-                {% endfor %}
-
-                <div class="card-grid">
-                {% for cat in cats.items %}
-                    <div class="card">
-                        <div class="card-image">
-                            <img src="/api/placeholder/280/200" alt="{{ cat.name }}">
-                            <div class="card-favorite">♡</div>
-                        </div>
-                        <div class="card-content">
-                            <h2 class="card-title">{{ cat.name }}</h2>
-                            <div class="card-tags">
-                                <span class="tag">{{ cat.age }}歲</span>
-                                <span class="tag">{{ cat.gender }}</span>
-                            </div>
-                            <p class="card-description">{{ cat.description }}</p>
-                            <button class="card-button" data-cat-id="{{ cat.id }}">了解更多</button>
-                        </div>
+                    <div class="search-group">
+                        <label class="search-label" for="cat_gender">Gender</label>
+                        <select name="cat_gender" class="search-input" id="cat_gender">
+                            <option value="">All</option>
+                            <option value="公">Male</option>
+                            <option value="母">Female</option>
+                        </select>
                     </div>
-                {% endfor %}
-                {% for cat in globalcats.items %}
-                    <div class="card">
-                        <div class="card-image">
-                            <img src="/api/placeholder/280/200" alt="{{ cat.name }}">
-                            <div class="card-favorite">♡</div>
-                        </div>
-                        <div class="card-content">
-                            <h2 class="card-title">{{ cat.name }}</h2>
-                            <div class="card-tags">
-                                <span class="tag">{{ cat.age }}歲</span>
-                                <span class="tag">{{ cat.gender }}</span>
-                            </div>
-                            <p class="card-description">{{ cat.description }}</p>
-                            <button class="card-button" data-cat-id="{{ cat.id }}">了解更多</button>
-                        </div>
+                    <div class="search-group">
+                        <label class="search-label" for="cat_age">Age</label>
+                        <input type="number" name="cat_age" class="search-input" id="cat_age" min="0">
                     </div>
-                {% endfor %}
+                    <button type="submit" class="search-button">Search</button>
+                </form>
             </div>
-
+            <div class="card-container">
+                <div class="card-grid">
+                    {% for cat in cats %}
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{cat.img}}">
+                                <div class="card-favorite">♡</div>
+                            </div>
+                            <div class="card-content">
+                                <h2 class="card-title">{{ cat.name }}</h2>
+                                <div class="card-tags">
+                                    <span class="tag">{{ cat.age }}years old</span>
+                                    <span class="tag">{{ cat.gender }}</span>
+                                </div>
+                                <p class="card-description">{{ cat.description }}</p>
+                                <button class="card-button" data-cat-id="{{ cat.id }}" data-cat-isGlobal="0">See More</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for cat in globalcats %}
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{cat.img}}">
+                                <div class="card-favorite">♡</div>
+                            </div>
+                            <div class="card-content">
+                                <h2 class="card-title">{{ cat.name }}</h2>
+                                <div class="card-tags">
+                                    <span class="tag">{{ cat.age }}years old</span>
+                                    <span class="tag">{{ cat.gender }}</span>
+                                </div>
+                                <p class="card-description">{{ cat.description }}</p>
+                                <button class="card-button" data-cat-id="{{ cat.id }}" data-is-Global="1">See More</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+    
             <!-- 分頁按鈕 -->
             <div class="pagination">
                 {% if cats.has_prev %}
-                    <a href="{{ url_for('admin_cat_info', page=cats.prev_num) }}">上一頁</a>
+                    <a href="{{ url_for('admin_cat_info', page=cats.prev_num) }}">Prev</a>
                 {% endif %}
-                <span>頁數: {{ cats.page }} / {{ cats.pages }}</span>
+                <span>Page: {{ cats.page }} / {{ cats.pages }}</span>
                 {% if cats.has_next %}
-                    <a href="{{ url_for('admin_cat_info', page=cats.next_num) }}">下一頁</a>
+                    <a href="{{ url_for('admin_cat_info', page=cats.next_num) }}">Next</a>
                 {% endif %}
             </div>
-        </div>
-        <!-- Modal HTML 結構 -->
-        <div class="modal-overlay" id="catModal">
-            <div class="modal-content">
-                <button class="modal-close">&times;</button>
-                <div class="modal-body">
-                    <div class="cat-info">
-                        <h2 id="modalCatName"></h2>
-                        <div class="info-item">
-                            <span class="info-label">年齡：</span>
-                            <span class="info-value" id="modalCatAge"></span>
+            <!-- Modal HTML 結構 -->
+            <div class="modal-overlay" id="catModal">
+                <div class="modal-content">
+                    <button class="modal-close">&times;</button>
+                    <div class="modal-body">
+                        <div class="cat-info">
+                            <h2 id="modalCatName"></h2>
+                            <div class="info-item">
+                                <span class="info-label">Age:</span>
+                                <span class="info-value" id="modalCatAge"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Gender:</span>
+                                <span class="info-value" id="modalCatGender"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Health Status:</span>
+                                <span class="info-value" id="modalCatHealth"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Personality:</span>
+                                <span class="info-value" id="modalCatPersonality"></span>
+                            </div>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">性別：</span>
-                            <span class="info-value" id="modalCatGender"></span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">品種：</span>
-                            <span class="info-value" id="modalCatBreed"></span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">健康狀況：</span>
-                            <span class="info-value" id="modalCatHealth"></span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">性格：</span>
-                            <span class="info-value" id="modalCatPersonality"></span>
-                        </div>
-                    </div>
-                    <div class="contact-info">
-                        <h3>聯絡資訊</h3>
-                        <div class="contact-details">
+                        <div class="contact-info">
+                            <h3>Contact Info</h3>
+                            <div class="contact-details">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -172,16 +153,16 @@
 
             // 更新 Modal 內容
             document.getElementById('modalCatName').textContent = catData.cat.name;
-            document.getElementById('modalCatAge').textContent = `${catData.cat.age}歲`;
+            document.getElementById('modalCatAge').textContent = `${catData.cat.age}years old`;
             document.getElementById('modalCatGender').textContent = catData.cat.gender;
-            document.getElementById('modalCatBreed').textContent = catData.cat.breed || '未知';  // 若無品種資料可設為 "未知"
+            document.getElementById('modalCatBreed').textContent = catData.cat.breed || 'Unknown';  // 若無品種資料可設為 "未知"
             document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
             document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
 
             // 更新聯絡資訊
             document.querySelector('.contact-details').innerHTML = `
-                <p>聯絡人：${catData.user_contact}</p>
-                <p>聯絡方式：${catData.user_contact}</p>
+                <p>Name:${catData.user_contact}</p>
+                <p>Contact Info:${catData.user_contact}</p>
             `;
 
             // 顯示 Modal
@@ -190,10 +171,9 @@
             document.body.style.overflow = 'hidden';
         } catch (error) {
             console.error('Error fetching cat details:', error);
-            alert('無法獲取貓咪資料，請稍後再試');
+            alert('Unable to obtain cat information, please try again later');
         }
     }
-
 
     // 關閉 Modal
     function closeModal() {
@@ -201,13 +181,6 @@
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
-
-    // 點擊背景關閉
-    document.querySelector('.modal-overlay').addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal-overlay')) {
-            closeModal();
-        }
-    });
 
     // 關閉按鈕
     document.querySelector('.modal-close').addEventListener('click', closeModal);

@@ -9,8 +9,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 # 配置數據庫連接
-app.config['SECRET_KEY'] = 'meowtopia'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:87518875@localhost/Meowtopia'
+app.config['SECRET_KEY'] = 'Jin_xin0816' #'87518875'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -27,7 +27,7 @@ class User(db.Model):
     gender = db.Column(db.String(10))
     contact = db.Column(db.String(255))
     cats = db.relationship('Cat', backref='owner', lazy=True)  # 與 Cat 的反向關聯
-    #created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
     is_admin = db.Column(db.Boolean, default=False)  # 預設為 False（普通用戶）
     #adoptions = db.relationship('Adoption', backref='user', lazy=True)  # 申請領養資料
 
@@ -82,9 +82,7 @@ class GlobalCat(db.Model):
     gender = db.Column(db.String(10))                                   # 性別
     health_status = db.Column(db.Text)                                  # 健康狀況
     personality = db.Column(db.Text)                                    # 性格特點
-    img = db.Column(db.String(255))                                     # 圖片網址
-    linker = db.Column(db.String(255))                                  # 網站來源
-    src = db.Column(db.String(50))                                      # 網站名稱
+    img =  db.Column(db.String(255))                                     # 圖片網址
     #adoption_status = db.Column(db.String(20), default='available')     # 領養狀態
     #created_at = db.Column(db.DateTime, default=datetime.utcnow)        # 創建時間
     #adoptions = db.relationship('Adoption', backref='cat', lazy=True)   # 與領養申請的關聯
