@@ -239,7 +239,6 @@ body.dashboard {
 }
 .card-container {
     max-width: 1200px;
-    padding: 20px;
     margin: 0 auto;
     border-radius: 12px;
 }
@@ -421,6 +420,29 @@ body.dashboard {
     padding: 30px;
     margin: 20px;
 }
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;     
+    padding: 20px;
+}
+.modal-button {
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 50%;
+}
+
+.modal-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
 /* --------------貓咪資訊卡------ */
 .cat-info {
@@ -531,7 +553,7 @@ body.dashboard {
     padding: 20px 40px;
     background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .search-form {
@@ -623,13 +645,12 @@ li {
     list-style-type: none;
 }
 
-.function-buttons {
+.function-buttons { 
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+    justify-content: flex-end;
+    gap: 1rem; /* 增加按钮之间的间距 */
     width: 100%;
-    padding: 1rem;
+    padding-right: calc(70px + 2.5rem);
 }
 
 /* sidebar 按鈕樣式 */
@@ -687,6 +708,14 @@ li {
     background-color: rgba(255, 255, 255, 0.4);
 }
 
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+    }
+}
+
 /* 申請狀態欄 */
 .request-list {
     width: 90%;
@@ -731,12 +760,75 @@ li {
 .processing .status-dot { background-color: #64B5F6; }
 .success .status-dot { background-color: #81C784; }
 
+/* table 設計 */
+.request-table {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
+.request-table h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #4A90E2;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+td {
+    background-color: #fff;
+}
+
+td button {
+    padding: 8px 16px;
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td button:hover {
+    background-color: #357ABD;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        position: fixed;
-        z-index: 1;
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
     }
 }
+
+
