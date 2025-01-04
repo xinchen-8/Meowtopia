@@ -89,22 +89,22 @@
         <div class="modal" id="requestModal" aria-hidden="true">
             <div class="modal-body">
                 <button class="modal-close" onclick="closeRequestModal()">&times;</button>
-                <h2 id="requestName">hahaha</h2>
+                <h2 id="requestName">cat_name</h2>
                 <div class="info-item">
-                    <span class="info-label">年齡：</span>
-                    <span class="info-value" id="modalCatAge"></span>
+                    <span class="info-label">Age: </span>
+                    <span class="info-value" id="modalCatAge"> cat.age</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">性別：</span>
-                    <span class="info-value" id="modalCatGender"></span>
+                    <span class="info-label">Gender: </span>
+                    <span class="info-value" id="modalCatGender">cat.gender</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">健康狀況：</span>
-                    <span class="info-value" id="modalCatHealth"></span>
+                    <span class="info-label">Health Status:</span>
+                    <span class="info-value" id="modalCatHealth">cat.health</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">性格：</span>
-                    <span class="info-value" id="modalCatPersonality"></span>
+                    <span class="info-label">Personality:</span>
+                    <span class="info-value" id="modalCatPersonality">cat.ersonality</span>
                 </div>
             </div>
         </div>
@@ -156,19 +156,19 @@
             document.body.style.overflow = 'auto'; // 恢復滾動
         }
 
-        // 點擊 Modal 外部關閉
-        document.getElementById('createModal').addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                closeModal();
-            }
-        });
+        // // 點擊 Modal 外部關閉
+        // document.getElementById('createModal').addEventListener('click', (e) => {
+        //     if (e.target.classList.contains('modal-overlay')) {
+        //         closeModal();
+        //     }
+        // });
 
-        // 點擊模態框外部關閉
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
+        // // 點擊模態框外部關閉
+        // window.onclick = function(event) {
+        //     if (event.target.classList.contains('modal')) {
+        //         event.target.style.display = 'none';
+        //     }
+        // }
     </script>
 </body>
 </html>

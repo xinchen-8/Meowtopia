@@ -29,6 +29,10 @@
 }
 
 /* 網站基礎樣式設定 */
+html, body {
+    margin: 0; /* 移除默認的外邊距 */
+    box-sizing: border-box;
+}
 body {
     font-family: "Microsoft JhengHei", Arial, sans-serif;
     background-color: var(--background);
@@ -48,7 +52,7 @@ body.dashboard {
 
 /* 頂部導航欄樣式 */
 .header {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     padding: 0.84rem 2rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: flex;
@@ -62,6 +66,7 @@ body.dashboard {
 }
 
 .admin .header {
+    background: none;
     background-color: var(--primary-admin);
 }
 
@@ -404,7 +409,6 @@ body.dashboard {
     border-radius: 8px;
     transition: opacity 0.3s ease-in-out;
     opacity: 0;
-    overflow: hidden; /* 防止內容溢出 */
     transform: translateX(100%); /* 初始隐藏在屏幕外 */
 }
 
@@ -615,16 +619,19 @@ body.dashboard {
 }
 
 .main-container {
-    display: flex;
+    display: flex; 
+    flex-grow: 1; /* 撐滿剩餘空間 */
+    height: 100%; 
     position: relative;
-    box-sizing: border-box; 
-    overflow: hidden;
+    box-sizing: border-box;
 }
+
 /* Sidebar */
 .sidebar {
-    height: 100vh; 
+    min-height: 100vh; 
+    height: auto; 
     width: 300px;
-    top: 70px; /* 頂部導航欄高度 */
+    top: 0px; /* 頂部導航欄高度 */
     left: 0;
     background-color: rgba(0, 0, 0, 0.08); 
     padding: 1.5rem;

@@ -36,12 +36,12 @@ def fetch_api(url):
     response = requests.get(url, headers=headers, cookies=cookies)
     
     if response.status_code == 200:
-        print("成功取得資料！")
+        print("Information fetch successfully!")
         for i in response.json()['result']['animals']:
             url_list.append('https://www.petfinder.com/cat/jiji-'+str(i['animal']['id'])+'/gu/mangilao/guam-animals-in-need-gu01/')
             print('https://www.petfinder.com/cat/jiji-'+str(i['animal']['id'])+'/gu/mangilao/guam-animals-in-need-gu01/')
     else:
-        print(f"請求失敗，狀態碼: {response.status_code}")
+        print(f"Request failed, status code: {response.status_code}")
     return url_list
 
 def fetch_element_api(url):
