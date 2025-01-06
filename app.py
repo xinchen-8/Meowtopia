@@ -188,7 +188,7 @@ def manage_request():
             )
         db.session.add(new_request)
         db.session.commit()
-
+        return redirect(url_for('manage_request'))
     return render_template('user/request.html')
 
 @app.route('/api/get_requests')
