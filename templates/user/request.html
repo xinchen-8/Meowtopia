@@ -16,12 +16,12 @@
             <img src="{{ url_for('static', filename='images/logo_text.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
         </a>
         <nav class="auth-buttons">
-            <a href="{{ url_for('logout') }}" class="auth-buttons">登出</a>
+            <a href="{{ url_for('logout') }}" class="auth-buttons">Logout</a>
         </nav>
     </header>
     <div class="main-container">
         <nav class="sidebar">
-            <button class="sidebar-button" onclick="openModal()"> 新增</button>
+            <button class="sidebar-button" onclick="openModal()">New</button>
             
             <div class="request-list">
                 <div class="request-item waiting" onclick="openRequestModal(1)">
@@ -48,53 +48,55 @@
         </nav>
         <div class="modal-overlay" id="createModal" aria-hidden="true" role="dialog">
             <div class="modal-content">
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-                <form class="cat-form" action="/user/manage_request" method="POST" enctype="multipart/form-data">
-                    <div class="form-header">
-                        <h2>新增貓咪</h2>
-                    </div>
-                    <div class="form-content">
-                        <div class="image-upload">
-                            <div class="upload-icon" id="upload-icon">
-                                <span>+</span>
-                                <span>照片</span>
-                            </div>
-                            <input type="file" name="cat_image" accept="image/*" id="cat-image" onchange="showPreview(event)">
-                            <img id="preview" style="display: none;">
+                <div class="modal-scrollable">
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                    <form class="cat-form" action="/user/manage_request" method="POST" enctype="multipart/form-data">
+                        <div class="form-header">
+                            <h2>New Cat</h2>
                         </div>
-                        <div class="form-fields">
-                            <div class="form-group">
-                                <label>貓咪名字：</label>
-                                <input type="text" name="cat_name" required>
+                        <div class="form-content">
+                            <div class="image-upload">
+                                <div class="upload-icon" id="upload-icon">
+                                    <span>+</span>
+                                    <span style="font-size: 20px;">Picture</span>
+                                </div>
+                                <input type="file" name="cat_image" accept="image/*" id="cat-image" onchange="showPreview(event)">
+                                <img id="preview" style="display: none;">
                             </div>
-                            <div class="form-group">
-                                <label>貓咪年齡：</label>
-                                <input type="text" name="age" required>
-                            </div>
-                            <div class="form-group">
-                                <label>貓咪性別：</label>
-                                <select name="gender" required>
-                                    <option value="" disabled selected>choose</option>
-                                    <option value="1">Male</option>
-                                    <option value="0">Female</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>貓咪性格：</label>
-                                <textarea name="personality" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>貓咪健康狀況：</label>
-                                <textarea name="health_status" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>申請原因：</label>
-                                <textarea name="reason" required style="height: 1px;"></textarea>
+                            <div class="form-fields">
+                                <div class="form-group">
+                                    <label>貓咪名字：</label>
+                                    <input type="text" name="cat_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>貓咪年齡：</label>
+                                    <input type="text" name="age" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>貓咪性別：</label>
+                                    <select name="gender" required>
+                                        <option value="" disabled selected>choose</option>
+                                        <option value="1">Male</option>
+                                        <option value="0">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>貓咪性格：</label>
+                                    <textarea name="personality" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>貓咪健康狀況：</label>
+                                    <textarea name="health_status" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>申請原因：</label>
+                                    <textarea name="reason" required style="height: 1px;"></textarea>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <button type="submit" class="submit-btn">表單送出</button>
-                </form>
+                        <button type="submit" class="submit-btn">表單送出</button>
+                    </form>
+                </div>
             </div>
         </div>
         <!-- Request Modal -->
@@ -138,15 +140,16 @@
             const modal = document.getElementById('createModal');
             modal.style.display = 'flex';
             modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open'); // 添加类
         }
 
         function closeModal() {
             const modal = document.getElementById('createModal');
             modal.style.display = 'none';
             modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = 'auto';
+            document.body.classList.remove('modal-open'); // 移除类
         }
+
 
         function openRequestModal(id) {
             // 關閉之前的 modal（如果有的話）
@@ -158,14 +161,12 @@
             const modal = document.getElementById('requestModal');
             modal.style.transform = 'translateX(0)';
             modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
         }
 
         function closeRequestModal() {
             const modal = document.getElementById('requestModal');
             modal.style.transform = 'translateX(100%)'; // 隱藏在螢幕右側
             modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = 'auto'; // 恢復滾動
         }
 
         // // 點擊 Modal 外部關閉
