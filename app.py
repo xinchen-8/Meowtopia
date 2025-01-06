@@ -156,7 +156,7 @@ def get_globalcat(cat_id):
 
 
 # 用戶：領養申請
-@app.route('/user/manage_request', methods=['GET', 'POST'],endpoint='user_manage_request')
+@app.route('/user/manage_request', methods=['GET', 'POST'])
 @login_required
 def manage_request():
     if request.method == 'POST':
@@ -188,7 +188,6 @@ def manage_request():
             )
         db.session.add(new_request)
         db.session.commit()
-        return redirect(url_for('user_manage_request'))
 
     return render_template('user/request.html')
 
