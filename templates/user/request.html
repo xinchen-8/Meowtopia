@@ -24,23 +24,23 @@
             <button class="sidebar-button" onclick="openModal()">New</button>
             
             <div class="request-list">
-                <div class="request-item waiting" onclick="openRequestModal(1)">
+                <div class="request-item waiting">
                     <span class="status-dot"></span>
                     <span class="request-text">cat_name</span>
                 </div>
-                <div class="request-item failed" onclick="openRequestModal(2)">
+                <div class="request-item failed">
                     <span class="status-dot"></span>
                     <span class="request-text">cat_name</span>
                 </div>
-                <div class="request-item pending" onclick="openRequestModal(3)">
+                <div class="request-item pending">
                     <span class="status-dot"></span>
                     <span class="request-text">cat_name</span>
                 </div>
-                <div class="request-item processing" onclick="openRequestModal(3)">
+                <div class="request-item processing">
                     <span class="status-dot"></span>
                     <span class="request-text">cat_name</span>
                 </div>
-                <div class="request-item success" onclick="openRequestModal(3)">
+                <div class="request-item success">
                     <span class="status-dot"></span>
                     <span class="request-text">cat_name</span>
                 </div>
@@ -105,6 +105,10 @@
                 <button class="modal-close" onclick="closeRequestModal()">&times;</button>
                 <h2 id="requestName">cat_name</h2>
                 <div class="info-item">
+                    <span class="info-label">Status: </span>
+                    <span class="info-value" id="modalCatStatus"> cat.status</span>
+                </div>
+                <div class="info-item">
                     <span class="info-label">Age: </span>
                     <span class="info-value" id="modalCatAge"> cat.age</span>
                 </div>
@@ -151,7 +155,7 @@
         }
 
 
-        function openRequestModal(id) {
+        function openRequestModal(request) {
             // 關閉之前的 modal（如果有的話）
             const currentModal = document.querySelector('.modal[aria-hidden="false"]');
             if (currentModal) {
@@ -161,13 +165,96 @@
             const modal = document.getElementById('requestModal');
             modal.style.transform = 'translateX(0)';
             modal.setAttribute('aria-hidden', 'false');
+
+            state = request.status;
+            switch(request.status){
+                case 0:
+                    state = 'Awaiting review';
+                    break;
+                case 1:
+                    state = 'Awaiting adoption';
+                    break;
+                case 2:
+                    state = 'Adoption in progress';
+                    break;
+                case 3:
+                    state = 'Adoption successful';
+                    break;
+                case -1:
+                    state = 'Review failed';
+                    break;
+                default:
+                    state = 'Unknown';
+            }
+
+            document.getElementById('requestName').innerText = request.cat_name;
+            document.getElementById('modalCatStatus').innerText = state;
+            document.getElementById('modalCatAge').innerText = request.cat_age;
+            console.log(request.cat_gender);    
+            document.getElementById('modalCatGender').innerText = request.cat_gender == 1 ? 'Male' : 'Female';
+            document.getElementById('modalCatHealth').innerText = request.cat_health_status;
+            document.getElementById('modalCatPersonality').innerText = request.cat_personality;
         }
+        
 
         function closeRequestModal() {
             const modal = document.getElementById('requestModal');
             modal.style.transform = 'translateX(100%)'; // 隱藏在螢幕右側
             modal.setAttribute('aria-hidden', 'true');
         }
+
+        function fetchRequests() {
+            // 假設 API 返回的資料是包含貓咪請求資料的陣列
+            fetch('/api/get_requests')  // 替換成你的實際 API 路徑
+                .then(response => response.json())
+                .then(data => {
+                    const requestList = document.querySelector('.request-list');
+                    requestList.innerHTML = ''; // 清空現有請求
+                    console.log(data);
+                    // 根據返回的資料動態生成請求卡片
+                    data.requests.forEach(request => {
+                        const requestItem = document.createElement('div');
+                        requestItem.classList.add('request-item', request.status); // 根據狀態添加相應的 class
+
+                        // 點擊卡片時觸發 modal 顯示貓咪資料
+                        requestItem.addEventListener('click', () => openRequestModal(request));
+                        
+                        let statusClass = '';
+                        switch(request.status) {
+                            case 0:
+                                statusClass = 'waiting'; //'Awaiting review';
+                                break;
+                            case 1:
+                                statusClass = 'pending'; //'Awaiting adoption';
+                                break;
+                            case 2:
+                                statusClass = 'processing'; //'Adoption in progress';
+                                break;
+                            case 3:
+                                statusClass = 'success'; //'Adoption successful';
+                                break;
+                            case -1:
+                                statusClass = 'faild'; //'Review failed';
+                                break;
+                            default:
+                                statusClass = 'Unknown';
+                        }
+
+                        requestItem.classList.add('request-item', statusClass);
+                        requestItem.innerHTML = `
+                            <span class="status-dot"></span>
+                            <span class="request-text">${request.cat_name}</span>
+                        `;
+                        requestItem.addEventListener('click', () => openRequestModal(request));
+                        requestList.appendChild(requestItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching requests:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRequests();  // 頁面加載時拉取請求資料
+        });
 
         // // 點擊 Modal 外部關閉
         // document.getElementById('createModal').addEventListener('click', (e) => {
