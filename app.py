@@ -1,5 +1,8 @@
 from classes import *
 from math import ceil, floor
+import requests
+
+DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1325838177231175801/YDoLRxKOUNZjakBz4Se4EZcsvNTzUPLKdOtk0wzCmEMqQCqLgb9rfokTtdaV3MDPRMhR'
 
 # 首頁
 @app.route('/')
@@ -162,7 +165,38 @@ def get_globalcat(cat_id):
 @app.route('/user/manage_request', methods=['GET', 'POST'])
 @login_required
 def manage_request():
-    
+    if request.method == 'POST':
+        
+        # 接收圖片文件
+        file = request.files.get('cat_image')
+        if file:
+            files = {'file': (file.filename, file.stream, file.mimetype)}
+            response = requests.post(DISCORD_WEBHOOK_URL, files=files)
+            
+            if response.status_code != 200:
+                return jsonify({"error": "無法上傳圖片到 Discord"}), 500
+            
+            # 解析 Discord 返回的圖片 URL
+            discord_response = response.json()
+            image_url = discord_response['attachments'][0]['url']
+            print(image_url)
+        else:
+            file = 'Unknown'
+        
+        new_request = Request(
+                user_id = current_user.id,  # 申請用戶ID
+                cat_name = request.form.get('cat_name'),  # 貓咪名字
+                cat_age = request.form.get('age'),  # 貓咪年齡
+                cat_gender = request.form.get('gender'),  # 貓咪性別
+                cat_health_status = request.form.get('health_status'), # 貓咪健康狀況
+                cat_personality = request.form.get('personality'),  # 貓咪性格
+                img = file,  # 圖片網址
+                reason = request.form.get('reason'), # 申請原因
+                status = 0  # 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
+            )
+        db.session.add(new_request)
+        db.session.commit()
+
     return render_template('user/request.html')
 
 # ---------------------------- 管理員路由  -------------------------------
