@@ -24,28 +24,15 @@
             <button class="sidebar-button" onclick="openModal()">New</button>
             
             <div class="request-list">
-                <div class="request-item waiting" onclick="openRequestModal(1)">
-                    <span class="status-dot"></span>
-                    <span class="request-text">cat_name</span>
-                </div>
-                <div class="request-item failed" onclick="openRequestModal(2)">
-                    <span class="status-dot"></span>
-                    <span class="request-text">cat_name</span>
-                </div>
-                <div class="request-item pending" onclick="openRequestModal(3)">
-                    <span class="status-dot"></span>
-                    <span class="request-text">cat_name</span>
-                </div>
-                <div class="request-item processing" onclick="openRequestModal(3)">
-                    <span class="status-dot"></span>
-                    <span class="request-text">cat_name</span>
-                </div>
-                <div class="request-item success" onclick="openRequestModal(3)">
-                    <span class="status-dot"></span>
-                    <span class="request-text">cat_name</span>
-                </div>
+                {% for request in requests_query %}
+                    <div class="request-item {{ request.get_status_class() }}" onclick="openRequestModal({{ request.id }})">
+                        <span class="status-dot"></span>
+                        <span class="request-text">{{ request.cat_name }}</span>
+                    </div>
+                {% endfor %}
             </div>
         </nav>
+        <!-- 提交新的申請 -->
         <div class="modal-overlay" id="createModal" aria-hidden="true" role="dialog">
             <div class="modal-content">
                 <div class="modal-scrollable">
@@ -99,31 +86,74 @@
                 </div>
             </div>
         </div>
-        <!-- Request Modal -->
+        <!-- Request Review Modal -->
         <div class="modal" id="requestModal" aria-hidden="true">
             <div class="modal-body">
                 <button class="modal-close" onclick="closeRequestModal()">&times;</button>
-                <h2 id="requestName">cat_name</h2>
+                <h2 id="requestName"></h2>
+                <div class="imagecontainer"></div>
                 <div class="info-item">
                     <span class="info-label">Age: </span>
-                    <span class="info-value" id="modalCatAge"> cat.age</span>
+                    <span class="info-value" id="modalCatAge"></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Gender: </span>
-                    <span class="info-value" id="modalCatGender">cat.gender</span>
+                    <span class="info-value" id="modalCatGender"></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Health Status:</span>
-                    <span class="info-value" id="modalCatHealth">cat.health</span>
+                    <span class="info-value" id="modalCatHealth"></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Personality:</span>
-                    <span class="info-value" id="modalCatPersonality">cat.ersonality</span>
+                    <span class="info-value" id="modalCatPersonality"></span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Request status:</span>
+                    <span class="info-value" id="modalCatStatus"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Reason for return:</span>
+                    <span class="info-value" id="modalCatSpecialHint"></span>
+                </div>
+                <div class="modal-footer" id="modalFooter" style="display: none;">
+                    <button class="modal-button">Resumbit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 預定成功後顯示的 Canvas -->
+        <div id="SuccessfulModal" style="display: {% if request_successful %}block{% else %}none{% endif %};">
+            <div id="SuccessfulContent">
+                <h3>Your request was sumbit successfuly!</h3>
+                <canvas id="canvas"></canvas>
+                <script>
+                    var canvas = document.getElementById("canvas");
+                    var ctx = canvas.getContext("2d");
+
+                    // 加載圖片
+                    var img = new Image();
+                    img.src = "{{ url_for('static', filename='images/checkmark.png') }}";
+
+                    img.onload = function() {
+                        // 當圖片加載完成後，繪製到 Canvas 上
+                        ctx.drawImage(img, canvas.width / 2 - 75, canvas.height / 2 - 75, 150, 150);
+                    };
+                </script>
             </div>
         </div>
     </div>
     <script>
+        window.onload = function() {
+            if ({{ request_successful | tojson }}) {
+                document.getElementById("SuccessfulModal").style.display = "flex";
+                setTimeout(function() {
+                    document.getElementById("SuccessfulModal").style.display = "none";
+                    window.location.reload();  // 刷新页面以加载最新数据
+                }, 3000); // 3秒后自动关闭
+            }
+        }
+
         // 預覽圖片
         function showPreview(event) {
             const file = event.target.files[0];
@@ -150,38 +180,78 @@
             document.body.classList.remove('modal-open'); // 移除类
         }
 
+        async function openRequestModal(id) {
+            try {
+                // 發送請求獲取data
+                const response = await fetch(`/api/requestCat/${id}`);
+                const catData = await response.json();
 
-        function openRequestModal(id) {
-            // 關閉之前的 modal（如果有的話）
-            const currentModal = document.querySelector('.modal[aria-hidden="false"]');
-            if (currentModal) {
-                currentModal.style.transform = 'translateX(100%)'; // 隱藏先前的 modal
-                currentModal.setAttribute('aria-hidden', 'true');
+                // 清空之前的图片
+                const imageContainer = document.querySelector('.imagecontainer');
+                imageContainer.innerHTML = '';  // 清空图片容器
+
+                // 填充資料
+                var age = catData.cat.age;
+                if (age == -1) age = 'Unknown';
+                else if (age == -2) age = '0~1';
+                else if (age == -3) age = '2~3';
+                else if (age == -4) age = '4~7';
+
+                var gender = catData.cat.gender;
+                if (gender == -1) gender = 'Unknown';
+                else if (gender == 0) gender = 'Female';
+                else gender = 'Male';
+
+                var status = catData.request.status;
+                if (status == -1) status = 'Review failed';
+                else if(status ==0) status = 'Waiting for review';
+                else if(status ==1) status = 'Waiting for adoption';
+                else if(status ==2) status = 'Adoption application in progress';
+                else if(status ==3) status = 'Adoption successful';
+
+                // 更新内容
+                document.getElementById('requestName').textContent = catData.cat.name;
+                document.getElementById('modalCatAge').textContent = `${age} year(s)`;
+                document.getElementById('modalCatGender').textContent = gender;
+                document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
+                document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
+                document.getElementById('modalCatStatus').textContent = status;
+
+                // 动态插入图片
+                if (catData.cat.img) {
+                    const img = document.createElement('img');
+                    img.src = catData.cat.img;  // 图片的 URL
+                    img.alt = 'Cat image';
+                    img.style.maxWidth = '100%';  // 可根据需要调整图片大小
+                    img.style.height = 'auto';
+                    imageContainer.appendChild(img);
+                }
+
+                // 若審核失敗/等待審核可以重新更新資料
+                const modalFooter = document.getElementById('modalFooter');
+                if (catData.request.status === -1 || catData.request.status === 0) {
+                    modalFooter.style.display = 'block';  // 显示
+                } else {
+                    modalFooter.style.display = 'none';   // 隐藏
+                }
+                // 显示
+                const modal = document.getElementById('requestModal');
+                modal.style.transform = 'translateX(0)';
+                modal.setAttribute('aria-hidden', 'false');
+
+                // 滾動到最上面
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-            const modal = document.getElementById('requestModal');
-            modal.style.transform = 'translateX(0)';
-            modal.setAttribute('aria-hidden', 'false');
         }
+
 
         function closeRequestModal() {
             const modal = document.getElementById('requestModal');
             modal.style.transform = 'translateX(100%)'; // 隱藏在螢幕右側
             modal.setAttribute('aria-hidden', 'true');
         }
-
-        // // 點擊 Modal 外部關閉
-        // document.getElementById('createModal').addEventListener('click', (e) => {
-        //     if (e.target.classList.contains('modal-overlay')) {
-        //         closeModal();
-        //     }
-        // });
-
-        // // 點擊模態框外部關閉
-        // window.onclick = function(event) {
-        //     if (event.target.classList.contains('modal')) {
-        //         event.target.style.display = 'none';
-        //     }
-        // }
     </script>
 </body>
 </html>

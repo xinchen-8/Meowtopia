@@ -9,7 +9,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 # 配置數據庫連接
-app.config['SECRET_KEY'] = 'meowtopia'
+app.config['SECRET_KEY'] = 'meowtopia' # meowtopia
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:87518875@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -97,3 +97,13 @@ class Request(db.Model):
     status = db.Column(db.SmallInteger, default=0)  # 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
     special_hint = db.Column(db.String(255))  # 特殊提示：未通過時使用這裡告知未通過原因
     adopter_id = db.Column(db.Integer, db.ForeignKey('users.id'))  # 領養者
+
+    def get_status_class(self):
+        status_classes = {
+            -1: "failed",
+            0: "waiting",
+            1: "pending",
+            2: "processing",
+            3: "success"
+        }
+        return status_classes.get(self.status, "unknown")

@@ -22,7 +22,7 @@ def login_signUp():
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('home'))
-        flash('無效的用戶名或密碼', 'danger')
+        flash('Invalid username or password', 'danger')
 
     elif tab == 'signup' and request.method == 'POST':
         # 註冊邏輯
@@ -33,30 +33,30 @@ def login_signUp():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
         if password != confirm_password:
-            flash('密碼不一致', 'warning')
+            flash('Passwords are inconsistent', 'warning')
             return redirect(url_for('login_signUp', tab='signup'))
 
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            flash('該用戶名已被使用', 'warning')
+            flash('This username is already taken', 'warning')
         elif len(password) < 8:  # 簡單的密碼強度檢查
-            flash('密碼長度必須至少為 8 位', 'warning')
+            flash('Password length must be at least 8 characters', 'warning')
         else:
             try:
                 user = User(
                     username=username, 
                     contact=contact, 
                     age=int(age),  
-                    gender= 1 if gender=='男' else 0
+                    gender= 1 if gender=='Male' else 0
                 )
                 user.set_password(password)
                 db.session.add(user)
                 db.session.commit()
-                flash('註冊成功，請登入！', 'success')
+                flash('Registration successful, please log in!', 'success')
                 return redirect(url_for('login_signUp', tab='login'))
             except Exception as e:
                 db.session.rollback()
-                flash('註冊時出現問題，請重試', 'danger')
+                flash('There was a problem while registering, please try again!', 'danger')
 
     return render_template('login_signUp.html', tab=tab)
 
@@ -165,8 +165,9 @@ def get_globalcat(cat_id):
 @app.route('/user/manage_request', methods=['GET', 'POST'])
 @login_required
 def manage_request():
+    request_successful = False
+    requests_query = Request.query.filter_by(user_id=current_user.id).all()
     if request.method == 'POST':
-        
         # 接收圖片文件
         file = request.files.get('cat_image')
         if file:
@@ -190,14 +191,43 @@ def manage_request():
                 cat_gender = request.form.get('gender'),  # 貓咪性別
                 cat_health_status = request.form.get('health_status'), # 貓咪健康狀況
                 cat_personality = request.form.get('personality'),  # 貓咪性格
-                img = file,  # 圖片網址
+                img = image_url,  # 圖片網址
                 reason = request.form.get('reason'), # 申請原因
                 status = 0  # 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
             )
         db.session.add(new_request)
         db.session.commit()
+        request_successful = True
+        # 重定向到当前页面，并附加成功提示参数
+        return redirect(url_for('manage_request', request_successful=request_successful))  # 重新定向到當前頁面，避免重複提交表單
+    return render_template('user/request.html', requests_query=requests_query, request_successful=request_successful)
 
-    return render_template('user/request.html')
+
+@app.route('/api/requestCat/<int:request_id>', methods=['GET'])
+def get_cat_data(request_id):
+    print(f"Received cat_id: {request_id}")
+    try:
+        request_cat = Request.query.get_or_404(request_id)
+        
+        request_data = {
+            "cat": {
+                "name": request_cat.cat_name,
+                "age": request_cat.cat_age,
+                "gender": request_cat.cat_gender,
+                "health_status": request_cat.cat_health_status,
+                "personality": request_cat.cat_personality,
+                "img": request_cat.img
+            },
+            "request": {
+                "status": request_cat.status,
+                "special_hint" : request_cat.special_hint
+            }
+        }
+        
+        return jsonify(request_data)
+    except Exception as e:
+        print(f"Error occurred: {e}")  # 打印错误信息
+        return jsonify({"error": "Something went wrong."}), 500
 
 # ---------------------------- 管理員路由  -------------------------------
 # 管理員：貓咪資料頁面
