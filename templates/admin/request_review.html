@@ -184,7 +184,7 @@
                 `;
                 // 若審核失敗/等待審核可以
                 const modalFooter = document.getElementById('modalFooter');
-                if (catData.request.status === -1 || catData.request.status === 0) {
+                if (catData.request.status === 0) {
                     modalFooter.style.display = 'block';  // 显示
                 } else {
                     modalFooter.style.display = 'none';   // 隐藏
