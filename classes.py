@@ -7,11 +7,12 @@ from sqlalchemy.orm import joinedload
 from wtforms import StringField, SubmitField, DateField, SelectField    # 創建表單欄位
 from wtforms.validators import DataRequired     # 用於表單欄位來檢查是否填寫了必填字段
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 # 配置數據庫連接
 app.config['SECRET_KEY'] = 'Jin_xin0816' # meowtopia
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgres://u76h5eh8mf7jug:p7a6d7942f531a8764f05d99607633add7d7e9fa3ac1ee7157631922a90817f3c@cc0gj7hsrh0ht8.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d6in11055dnpt6')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
