@@ -107,11 +107,11 @@ def do(url):
             db.session.commit()
             
     
-def crawler_catwelfare(delete):
+def crawl_catwelfare(delete):
     if delete:
         with app.app_context():
             db.session.query(GlobalCat).delete()
             db.session.commit()
     do(BASE_URL)
 
-# crawler_catwelfare(True)
+#crawler_catwelfare(True)

@@ -1,5 +1,9 @@
 from classes import *
+import threading
+from crawler_catwelfare import crawl_catwelfare
+from crawler_petfinder import crawl_petfinder
 from math import ceil, floor
+import time
 import requests
 
 DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1325838177231175801/YDoLRxKOUNZjakBz4Se4EZcsvNTzUPLKdOtk0wzCmEMqQCqLgb9rfokTtdaV3MDPRMhR'
@@ -308,6 +312,19 @@ def admin_request_review():
         req.user = User.query.get(req.user_id)  # 根據 user_id 查找對應的用戶
 
     return render_template('admin/request_review.html', requests=requests)
+
+@app.route('/api/refetch', methods=['GET'])
+def refetch():
+    try:
+        db.session.query(GlobalCat).delete()
+        db.session.commit()
+        threading.Thread(target=crawl_catwelfare(True)).start()
+        time.sleep(1)
+        threading.Thread(target=crawl_petfinder(False)).start()
+        return jsonify({"message": "Refetch successful."})
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Something went wrong."}), 500
 
 # 管理員：更新領養申請狀態
 # @app.route('/admin/request_review/<int:adoption_id>', methods=['POST'])

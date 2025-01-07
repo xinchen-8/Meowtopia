@@ -229,9 +229,9 @@
                 // 动态插入图片
                 if (catData.cat.img) {
                     const img = document.createElement('img');
-                    img.src = catData.cat.img;  // 图片的 URL
-                    img.alt = 'Cat image';
-                    img.style.maxWidth = '100%';  // 可根据需要调整图片大小
+                    img.src = catData.cat.img = (catData.cat.img!='Unknown') ? catData.cat.img : '';
+                    //img.alt = 'Cat image';
+                    img.style.maxWidth = '100px';  // 可根据需要调整图片大小
                     img.style.height = 'auto';
                     imageContainer.appendChild(img);
                 }

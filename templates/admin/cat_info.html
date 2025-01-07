@@ -45,8 +45,8 @@
                         <label class="search-label" for="cat_gender">Gender</label>
                         <select name="cat_gender" class="search-input" id="cat_gender">
                             <option value="">All</option>
-                            <option value="公">Male</option>
-                            <option value="母">Female</option>
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
                         </select>
                     </div>
                     <div class="search-group">
@@ -58,7 +58,7 @@
             </div>
             <div class="function-buttons">
                 <button class="cta-button" onclick="openAddNewModal()">+</button>
-                <button class="cta-button" onclick="Refetch()">↻</button>
+                <button class="cta-button" onclick="Refetch()">Refresh crawler database ↻</button>
             </div>
             <div class="card-container">
                 <div class="card-grid">
@@ -242,6 +242,14 @@
             const modal = document.getElementById('catModal');
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        async function Refetch(){
+            alert('Background Crawling~ Please refresh this page later a few minutes!');
+            response = await fetch(`/api/refetch`);
+            if(response.status == 200) alert('Refetch success!');
+            else alert('Refetch failed!');
+            location.reload();
         }
 
         // 關閉按鈕
