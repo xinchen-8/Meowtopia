@@ -3,14 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
+from sqlalchemy.orm import joinedload
 from wtforms import StringField, SubmitField, DateField, SelectField    # 創建表單欄位
 from wtforms.validators import DataRequired     # 用於表單欄位來檢查是否填寫了必填字段
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'meowtopia'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:87518875@localhost/Meowtopia'
 # 配置數據庫連接
+app.config['SECRET_KEY'] = 'Jin_xin0816' # meowtopia
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
