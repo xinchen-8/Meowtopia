@@ -11,7 +11,7 @@ from datetime import datetime
 app = Flask(__name__)
 # 配置數據庫連接
 app.config['SECRET_KEY'] = 'Jin_xin0816' # meowtopia
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:87518875@localhost/Meowtopia'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

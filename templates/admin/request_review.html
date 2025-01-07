@@ -76,11 +76,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for req in requests.items %}
-                        <tr>
-                            <td>{{ req.user.username }}</td><!-- 用戶名字 -->
+                        {% for req in requests%}
+                        <tr id="request-row-{{ req.id }}">
+                            <td>{{ req.user.username }}</td>
                             <td>{{ req.cat_name }}</td>
-                            <td>
+                            <td class="status-cell">
                                 {% if req.status == -1 %}
                                     Review failed
                                 {% elif req.status == 0 %}
@@ -102,6 +102,13 @@
 
             <!-- 分頁按鈕 -->
             <div class="pagination">
+                {% if pageinfo[0]>1 %}
+                    <a href="{{ url_for('admin_request_review', page=pageinfo[0]-1) }}">Prev</a>
+                {% endif %}
+                <span>Page: {{ pageinfo[0] }} / {{ pageinfo[1] }}</span>
+                {% if pageinfo[0] < pageinfo[1] %}
+                    <a href="{{ url_for('admin_request_review', page=pageinfo[0]+1) }}">Next</a>
+                {% endif %}
             </div>
             <!-- Modal HTML 結構 -->
             <div class="modal-overlay" id="catModal">
@@ -132,7 +139,7 @@
                             <div class="contact-details"></div>
                         </div>
                         <div class="modal-footer" id="modalFooter" style="display: none;">
-                            <button class="modal-button" data-status="2">Success</button>
+                            <button class="modal-button" data-status="1">Success</button>
                             <button class="modal-button" data-status="-1">Reject</button>
                         </div>                        
                     </div>
@@ -189,6 +196,8 @@
                 } else {
                     modalFooter.style.display = 'none';   // 隐藏
                 }
+
+                modalFooter.dataset.requestId = requestId; // 保存 requestId 到 modalFooter
                 
                 // 顯示 Modal
                 const modal = document.getElementById('catModal');
@@ -209,6 +218,54 @@
 
         // 關閉按鈕
         document.querySelector('.modal-close').addEventListener('click', closeModal);
+
+        // 綁定按鈕點擊事件
+        document.querySelectorAll('.modal-button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const newStatus = event.target.dataset.status; 
+                const requestId = document.getElementById('modalFooter').dataset.requestId; 
+                
+                if (!requestId) {
+                    alert("Invalid request ID");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/updateRequestStatus/${requestId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert("Status updated successfully!");
+                        // 刷新頁面
+                        location.reload(); 
+                    } else {
+                        console.error("Error updating status:", result.error);
+                        alert("Failed to update status. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error sending request:", error);
+                    alert("An error occurred. Please try again later.");
+                }
+            });
+        });
+        // 根據狀態代碼返回對應的狀態文本
+        function getStatusText(statusCode) {
+            const statusTexts = {
+                "-1": "Review failed",
+                "0": "Waiting for review",
+                "1": "Waiting for adoption",
+                "2": "Adoption application in progress",
+                "3": "Adoption successful"
+            };
+            return statusTexts[statusCode] || "Unknown";
+        }
     </script>
 </body>
 </html>

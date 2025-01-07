@@ -278,18 +278,13 @@ def admin_cat_info():
 @app.route('/admin/request_review', methods=['GET', 'POST'])
 @login_required
 def admin_request_review():
-    page = request.args.get('page', 1, type=int)  # 取得頁碼，預設是第1頁
     query = Request.query  # 初始化查詢
-
     if request.method == 'POST':
         # 取得表單提交的數據
         cat_name = request.form.get('cat_name')
         cat_gender = request.form.get('cat_gender')
         cat_age = request.form.get('cat_age')
         status = request.form.get('status')
-        
-        # 打印提交的數據進行調試
-        print(f"cat_name: {cat_name}, cat_gender: {cat_gender}, cat_age: {cat_age}, status: {status}")
         
         # 根據表單數據建立查詢條件
         if cat_name:
@@ -301,17 +296,24 @@ def admin_request_review():
                 query = query.filter(Request.cat_gender == gender_mapping[cat_gender])
         if cat_age:
             query = query.filter(Request.cat_age == int(cat_age))  # 查詢年齡
-        if status:
+        if status not in [None, ""]:  # 只有當status不是空時才過濾
             query = query.filter(Request.status == int(status))  # 查詢狀態
+    print(query)  # 打印當前查詢語句進行調試
 
+    # 獲取頁碼
+    page = request.args.get('page', 1, type=int)  # 頁碼默認為1
+    per_page = 10  # 每頁顯示10個項目
+    
     # 執行分頁查詢
-    requests = query.paginate(page=page, per_page=10)
-
-    # 為每個請求加載對應的用戶信息
-    for req in requests.items:
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    for req in pagination.items:
         req.user = User.query.get(req.user_id)  # 根據 user_id 查找對應的用戶
-
-    return render_template('admin/request_review.html', requests=requests)
+    
+    # pageinfo = [當前頁，總頁數]
+    pageinfo = [pagination.page, pagination.pages]
+    
+    return render_template('admin/request_review.html', requests=pagination.items, pageinfo=pageinfo)
 
 @app.route('/api/refetch', methods=['GET'])
 def refetch():
@@ -327,15 +329,27 @@ def refetch():
         return jsonify({"error": "Something went wrong."}), 500
 
 # 管理員：更新領養申請狀態
-# @app.route('/admin/request_review/<int:adoption_id>', methods=['POST'])
-# @login_required
-# def update_adoption_status(adoption_id):
-#     adoption = Adoption.query.get_or_404(adoption_id)
-#     adoption.status = request.form['status']
-#     if adoption.status == 'approved':
-#         adoption.cat.adoption_status = 'adopted'
-#     db.session.commit()
-#     return redirect(url_for('admin_request_review'))
+@app.route('/api/updateRequestStatus/<int:request_id>', methods=['POST'])
+@login_required
+def update_request_status(request_id):
+    try:
+        # 獲取請求的 JSON 數據
+        data = request.get_json()
+        new_status = data.get('status')
+
+        if new_status is None:
+            return jsonify({"error": "Status is required"}), 400
+
+        # 查找對應的請求
+        request_obj = Request.query.get_or_404(request_id)
+        request_obj.status = int(new_status)  # 更新狀態
+
+        # 保存更改
+        db.session.commit()
+        return jsonify({"message": "Status updated successfully"})
+    except Exception as e:
+        print(f"Error updating status: {e}")
+        return jsonify({"error": "An error occurred"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
