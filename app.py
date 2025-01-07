@@ -196,11 +196,12 @@ def manage_request():
 
 
 @app.route('/api/requestCat/<int:request_id>', methods=['GET'])
-def get_cat_data(request_id):
-    print(f"Received cat_id: {request_id}")
+def get_request_data(request_id):
+    print(f"Received request_id: {request_id}")  
     try:
+        # 查找指定 ID 的請求資料，若找不到則返回 404
         request_cat = Request.query.get_or_404(request_id)
-        
+        user = User.query.get(request_cat.user_id)  
         request_data = {
             "cat": {
                 "name": request_cat.cat_name,
@@ -212,13 +213,14 @@ def get_cat_data(request_id):
             },
             "request": {
                 "status": request_cat.status,
-                "special_hint" : request_cat.special_hint
-            }
+                "special_hint": request_cat.special_hint
+            },
+            'user_name': user.username,
+            'user_contact': user.contact
         }
-        
         return jsonify(request_data)
     except Exception as e:
-        print(f"Error occurred: {e}")  # 打印错误信息
+        print(f"Error occurred: {e}")  
         return jsonify({"error": "Something went wrong."}), 500
 
 # ---------------------------- 管理員路由  -------------------------------
@@ -269,10 +271,43 @@ def admin_cat_info():
     return render_template('admin/cat_info.html', cats=cats, globalcats=globalcats, pageinfo=(page, ceil(totalsize/per_page)))
 
 # 管理員：領養申請審核頁面
-@app.route('/admin/request_review')
+@app.route('/admin/request_review', methods=['GET', 'POST'])
 @login_required
 def admin_request_review():
-    return render_template('admin/request_review.html')
+    page = request.args.get('page', 1, type=int)  # 取得頁碼，預設是第1頁
+    query = Request.query  # 初始化查詢
+
+    if request.method == 'POST':
+        # 取得表單提交的數據
+        cat_name = request.form.get('cat_name')
+        cat_gender = request.form.get('cat_gender')
+        cat_age = request.form.get('cat_age')
+        status = request.form.get('status')
+        
+        # 打印提交的數據進行調試
+        print(f"cat_name: {cat_name}, cat_gender: {cat_gender}, cat_age: {cat_age}, status: {status}")
+        
+        # 根據表單數據建立查詢條件
+        if cat_name:
+            query = query.filter(Request.cat_name.ilike(f'%{cat_name}%'))  # 模糊查詢貓咪名字
+        if cat_gender:
+            # 映射性別，假設 Male = 1, Female = 0
+            gender_mapping = {'Male': 1, 'Female': 0}
+            if cat_gender in gender_mapping:
+                query = query.filter(Request.cat_gender == gender_mapping[cat_gender])
+        if cat_age:
+            query = query.filter(Request.cat_age == int(cat_age))  # 查詢年齡
+        if status:
+            query = query.filter(Request.status == int(status))  # 查詢狀態
+
+    # 執行分頁查詢
+    requests = query.paginate(page=page, per_page=10)
+
+    # 為每個請求加載對應的用戶信息
+    for req in requests.items:
+        req.user = User.query.get(req.user_id)  # 根據 user_id 查找對應的用戶
+
+    return render_template('admin/request_review.html', requests=requests)
 
 # 管理員：更新領養申請狀態
 # @app.route('/admin/request_review/<int:adoption_id>', methods=['POST'])

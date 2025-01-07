@@ -10,79 +10,45 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'meowtopia'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:87518875@localhost/Meowtopia'
+# 配置數據庫連接
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-
-class Cat(db.Model):
-    __tablename__ = 'local_cats'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)    # 用戶 ID，外鍵
-    name = db.Column(db.String(100), nullable=False)                              # 貓咪名字
-    age = db.Column(db.Integer)                                                   # 年齡
-    gender = db.Column(db.Integer)                                                # 性別
-    health_status = db.Column(db.String(300))                                     # 健康狀況
-    personality = db.Column(db.String(300))                                       # 性格特點
-    img =  db.Column(db.String(300))                                              # 存儲照片的網址
-    user = db.relationship('User', backref=db.backref('local_cats', lazy=True))
-
-class GlobalCat(db.Model):
-    __tablename__ = 'global_cats'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)                    # 貓咪名字
-    age = db.Column(db.Integer)                                         # 年齡
-    gender = db.Column(db.Integer)                                      # 性別
-    health_status = db.Column(db.String(300))                           # 健康狀況
-    personality = db.Column(db.String(300))                             # 性格特點
-    img = db.Column(db.String(300))                                     # 圖片網址
-    linker = db.Column(db.String(300))                                  # 網站來源
-    src = db.Column(db.String(20))                                      # 網站名稱
-
-class Request(db.Model):
-    __tablename__ = 'requests'
-
-    id = db.Column(db.Integer, primary_key=True)                                    # 唯一標識
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))  # 申請用戶ID
-    cat_name = db.Column(db.String(100), nullable=False)                            # 貓咪名字
-    cat_age = db.Column(db.Integer)                                                 # 貓咪年齡
-    cat_gender = db.Column(db.Integer)                                              # 貓咪性別
-    cat_health_status = db.Column(db.String(300))                                   # 貓咪健康狀況
-    cat_personality = db.Column(db.String(300))                                     # 貓咪性格
-    img = db.Column(db.String(300))                                                 # 圖片網址
-    reason = db.Column(db.Text, nullable=False)                                     # 申請原因
-    status = db.Column(db.SmallInteger, default=0)                                  # 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
-    special_hint = db.Column(db.String(255))                                        # 特殊提示：未通過時使用這裡告知未通過原因
-    adopter_id = db.Column(db.Integer, db.ForeignKey('users.id'))                   # 領養者
-
+# 用戶類別
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)    # 用戶名，不可重複
-    password_hash = db.Column(db.String(128))                            # 加密後的密碼
-    age = db.Column(db.Integer)                                          # 年齡                                          
-    gender = db.Column(db.Integer)                                       # 性別                                
-    contact = db.Column(db.String(300))                                  # 聯繫方式
-    cats = db.relationship('Cat', backref='owner', lazy=True)            # 與 Cat 的反向關聯
-    is_admin = db.Column(db.Boolean, default=False)                      # 預設為 False（普通用戶）
+    password_hash = db.Column(db.String(128))                           # 加密後的密碼
+    age = db.Column(db.Integer)  
+    gender = db.Column(db.Integer)
+    contact = db.Column(db.String(300))
+    cats = db.relationship('Cat', backref='owner', lazy=True)  # 與 Cat 的反向關聯
+    is_admin = db.Column(db.Boolean, default=False)  # 預設為 False（普通用戶）
 
+    # 必须实现 Flask-Login 的方法
     def is_authenticated(self):
-        return True 
+        # 此方法用来返回是否已认证
+        return True  # 或者根据你的需求添加额外的逻辑
 
     def is_active(self):
+        # 你可以根据需要修改这个方法，默认返回 True 表示账户活跃
         return True
 
     def get_id(self):
+        # 返回用户的唯一 ID
         return str(self.id)
 
+    # 密碼設置
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    # 密碼驗證（登入用途）
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -451,9 +451,10 @@ body.modal-open {
     margin: 20px;
 }
 .modal-footer {
-    display: flex;
+    display: flex !important;
     justify-content: center;
-    align-items: center;     
+    align-items: center; 
+    gap: 10px;    
     padding: 20px;
 }
 .modal-button {

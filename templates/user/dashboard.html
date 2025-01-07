@@ -139,8 +139,7 @@
                 </div>
                 <div class="contact-info">
                     <h3>Contact Info</h3>
-                    <div class="contact-details">
-                    </div>
+                    <div class="contact-details"></div>
                 </div>
                 <div class="modal-footer">
                     <button class="modal-button">I want adoption</button>
@@ -152,10 +151,16 @@
     <script>
         function translateAge(age){
             if(age==-1) return 'Unknown';
-            else if(age==-2) return '0~1';
-            else if(age==-3) return '2~3';
-            else if(age==-4) return '4~7';
-            else return age;
+            else if(age==-2) age = '0~1';
+            else if(age==-3) age = '2~3';
+            else if(age==-4) age = '4~7';
+            return age;
+        }
+        function translateGender(gender){
+            if(gender==-1) gender='Unknown';
+            else if(gender==0) gender='Female';
+            else gender='Male';
+            return gender;
         }
         async function openModal(catId, isGlobal) {
             try {
@@ -168,9 +173,7 @@
                     var age = translateAge(catData.cat.age);
                     
                     var gender = catData.cat.gender;
-                    if(gender==-1) gender='Unknown';
-                    else if(gender==0) gender='Female';
-                    else gender='Male';
+                    
 
                     document.getElementById('modalCatName').textContent = catData.cat.name;
                     document.getElementById('modalCatAge').textContent = `${age} year(s)`;
@@ -190,11 +193,7 @@
                     const catData = await response.json();
 
                     var age = translateAge(catData.cat.age);
-                    
-                    var gender = catData.cat.gender;
-                    if(gender==-1) gender='Unknown';
-                    else if(gender==0) gender='Female';
-                    else gender='Male';
+                    var gender = translateGender(catData.cat.gender);
 
                     // 更新 Modal 內容
                     document.getElementById('modalCatName').textContent = catData.cat.name;
