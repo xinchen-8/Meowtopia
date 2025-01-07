@@ -1,4 +1,6 @@
 Flask
-psycopg2-binary
-SQLAlchemy
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2
 gunicorn
+flask_sqlalchemy
