@@ -136,10 +136,10 @@ def do():
                     print(f"Error committing page: {e}")
 
 
-def climb_petfinder(delete): #main
+def crawl_petfinder(delete): #main
     if delete:
         with app.app_context():
             db.session.query(GlobalCat).delete()
             db.session.commit()
     do()
-climb_petfinder(True)
+#climb_petfinder(False)
