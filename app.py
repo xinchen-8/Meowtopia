@@ -15,7 +15,6 @@ def login_signUp():
     tab = request.args.get('tab', 'login')  # 默認顯示登入表單
 
     if tab == 'login' and request.method == 'POST':
-        # 登入邏輯
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
@@ -25,7 +24,6 @@ def login_signUp():
         flash('Invalid username or password', 'danger')
 
     elif tab == 'signup' and request.method == 'POST':
-        # 註冊邏輯
         username = request.form['username']
         contact = request.form['contact']
         age = request.form['age']  
@@ -65,7 +63,7 @@ def login_signUp():
 @login_required
 def logout():
     logout_user()
-    session.clear()  # 清空 session
+    session.clear()
     return redirect(url_for('home'))
 
 # ---------------------------- 用戶路由   --------------------------
@@ -102,21 +100,17 @@ def dashboard():
             global_query = global_query.filter(GlobalCat.age == int(age) or GlobalCat.age == range_id)
             
     totalsize = query.count() + global_query.count()
-
     cats = query.offset((page-1) * per_page).limit(per_page).all()
-
     change_page = (1 + len(cats) // per_page) if len(cats) >= per_page else 1
     offset = len(cats) % per_page
 
-    globalcats = []
-    
+    globalcats = []    
     if page >= change_page:
         print(page, per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0)
         globalcats = global_query.offset(
             per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0
         ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
 
-    #print(page, change_page, cats, globalcats)
     return render_template('user/dashboard.html', cats=cats, globalcats=globalcats, pageinfo=(page, ceil(totalsize/per_page)))
 
 # 用於獲取貓咪詳細信息
@@ -168,7 +162,6 @@ def manage_request():
     request_successful = False
     requests_query = Request.query.filter_by(user_id=current_user.id).all()
     if request.method == 'POST':
-        # 接收圖片文件
         file = request.files.get('cat_image')
         if file:
             files = {'file': (file.filename, file.stream, file.mimetype)}
@@ -177,23 +170,22 @@ def manage_request():
             if response.status_code != 200:
                 return jsonify({"error": "無法上傳圖片到 Discord"}), 500
             
-            # 解析 Discord 返回的圖片 URL
             discord_response = response.json()
             image_url = discord_response['attachments'][0]['url']
-            print(image_url)
+            file = image_url
         else:
             file = 'Unknown'
         
         new_request = Request(
-                user_id = current_user.id,  # 申請用戶ID
-                cat_name = request.form.get('cat_name'),  # 貓咪名字
-                cat_age = request.form.get('age'),  # 貓咪年齡
-                cat_gender = request.form.get('gender'),  # 貓咪性別
-                cat_health_status = request.form.get('health_status'), # 貓咪健康狀況
-                cat_personality = request.form.get('personality'),  # 貓咪性格
-                img = image_url,  # 圖片網址
-                reason = request.form.get('reason'), # 申請原因
-                status = 0  # 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
+                user_id = current_user.id,  
+                cat_name = request.form.get('cat_name'),  
+                cat_age = request.form.get('age'),  
+                cat_gender = request.form.get('gender'),  
+                cat_health_status = request.form.get('health_status'), 
+                cat_personality = request.form.get('personality'),
+                img = image_url,  
+                reason = request.form.get('reason'), 
+                status = 0
             )
         db.session.add(new_request)
         db.session.commit()
@@ -228,6 +220,25 @@ def get_cat_data(request_id):
     except Exception as e:
         print(f"Error occurred: {e}")  # 打印错误信息
         return jsonify({"error": "Something went wrong."}), 500
+
+@app.route('/api/get_requests')
+def get_requests():
+    requests = Request.query.filter_by(user_id=current_user.id).all()
+    requests_data = [
+        {
+        'id': req.id,
+        'cat_name': req.cat_name,
+        'cat_age': req.cat_age,
+        'cat_gender': req.cat_gender,
+        'cat_health_status': req.cat_health_status,
+        'cat_personality': req.cat_personality,
+        'cat_img': req.img,
+        'reason': req.reason,
+        'status': req.status,
+        'special_hint': req.special_hint
+        } for req in requests
+    ] 
+    return jsonify({'requests': requests_data})
 
 # ---------------------------- 管理員路由  -------------------------------
 # 管理員：貓咪資料頁面
