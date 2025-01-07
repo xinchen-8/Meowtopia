@@ -7,19 +7,14 @@ from sqlalchemy.orm import joinedload
 from wtforms import StringField, SubmitField, DateField, SelectField    # 創建表單欄位
 from wtforms.validators import DataRequired     # 用於表單欄位來檢查是否填寫了必填字段
 from datetime import datetime
-import os
-from flask_migrate import Migrate
-from dotenv import load_dotenv
 
-load_dotenv()  # 載入 .env 文件
 app = Flask(__name__)
 # 配置數據庫連接
 app.config['SECRET_KEY'] = 'Jin_xin0816' # meowtopia
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)  # 初始化 Migrate
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
