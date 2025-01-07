@@ -209,6 +209,10 @@
                 else if(status ==2) status = 'Adoption application in progress';
                 else if(status ==3) status = 'Adoption successful';
 
+                var reason = catData.request.special_hint;
+                if (!reason) reason = 'None';
+
+
                 // 更新内容
                 document.getElementById('requestName').textContent = catData.cat.name;
                 document.getElementById('modalCatAge').textContent = `${age} year(s)`;
@@ -216,6 +220,7 @@
                 document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
                 document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
                 document.getElementById('modalCatStatus').textContent = status;
+                document.getElementById('modalCatSpecialHint').textContent = reason;
 
                 // 动态插入图片
                 if (catData.cat.img) {

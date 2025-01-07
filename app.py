@@ -221,25 +221,6 @@ def get_cat_data(request_id):
         print(f"Error occurred: {e}")  # 打印错误信息
         return jsonify({"error": "Something went wrong."}), 500
 
-@app.route('/api/get_requests')
-def get_requests():
-    requests = Request.query.filter_by(user_id=current_user.id).all()
-    requests_data = [
-        {
-        'id': req.id,
-        'cat_name': req.cat_name,
-        'cat_age': req.cat_age,
-        'cat_gender': req.cat_gender,
-        'cat_health_status': req.cat_health_status,
-        'cat_personality': req.cat_personality,
-        'cat_img': req.img,
-        'reason': req.reason,
-        'status': req.status,
-        'special_hint': req.special_hint
-        } for req in requests
-    ] 
-    return jsonify({'requests': requests_data})
-
 # ---------------------------- 管理員路由  -------------------------------
 # 管理員：貓咪資料頁面
 @app.route('/admin/cat_info', methods=['GET', 'POST'])
@@ -259,21 +240,26 @@ def admin_cat_info():
             query = query.filter(Cat.name.ilike(f'%{name}%'))
             global_query = global_query.filter(GlobalCat.name.ilike(f'%{name}%'))
         if gender:
+            gender = 0 if gender=='Female' else 1
             query = query.filter(Cat.gender == gender)
             global_query = global_query.filter(GlobalCat.gender == gender)
         if age:
+            age_range = [(range(-1,-1),-1), (range(0,2), -2), (range(2,4),-3), (range(4,8),-4)]
             query = query.filter(Cat.age == int(age))
-            global_query = global_query.filter(GlobalCat.age == int(age))
-
+            range_id = -1
+        
+            for i in age_range:
+                if int(age) in i[0]:    
+                    range_id = i[1]
+                    break                        
+            global_query = global_query.filter(GlobalCat.age == int(age) or GlobalCat.age == range_id)
+            
     totalsize = query.count() + global_query.count()
-
     cats = query.offset((page-1) * per_page).limit(per_page).all()
-
     change_page = (1 + len(cats) // per_page) if len(cats) >= per_page else 1
     offset = len(cats) % per_page
 
     globalcats = []
-    
     if page >= change_page:
         print(page, per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0)
         globalcats = global_query.offset(

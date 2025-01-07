@@ -88,8 +88,28 @@
                             <div class="card-content">
                                 <h2 class="card-title">{{ cat.name }}</h2>
                                 <div class="card-tags">
-                                    <span class="tag">{{ cat.age }} years old</span>
-                                    <span class="tag">{{ cat.gender }}</span>
+                                    <span class="tag">
+                                        {% if cat.age == -1 %}
+                                            Unknown
+                                        {% elif cat.age == -2 %}
+                                            0~1
+                                        {% elif cat.age == -3 %}
+                                            2~3
+                                        {% elif cat.age == -4 %}
+                                            4~7
+                                        {% else %}
+                                            {{cat.age}}
+                                        {% endif %}    
+                                        year(s)</span>
+                                    <span class="tag">
+                                        {% if cat.gender == 1 %}
+                                            Male
+                                        {% elif cat.gender == 0 %}
+                                            Female
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                        </span>
                                 </div>
                                 <p class="card-description">{{ cat.description }}</p>
                                 <button class="card-button" data-cat-id="{{ cat.id }}" data-is-Global="1">See More</button>
@@ -146,53 +166,95 @@
 
     <!-- 修改 JavaScript -->
     <script>
-    async function openModal(catId) {
-        try {
-            // 獲取貓咪詳細信息
-            const response = await fetch(`/api/cat/${catId}`);
-            const catData = await response.json();
-
-            // 更新 Modal 內容
-            document.getElementById('modalCatName').textContent = catData.cat.name;
-            document.getElementById('modalCatAge').textContent = `${catData.cat.age} years old`;
-            document.getElementById('modalCatGender').textContent = catData.cat.gender;
-            document.getElementById('modalCatBreed').textContent = catData.cat.breed || 'Unknown';  // 若無品種資料可設為 "未知"
-            document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
-            document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
-
-            // 更新聯絡資訊
-            document.querySelector('.contact-details').innerHTML = `
-                <p>Name: ${catData.user_contact}</p>
-                <p>Contact Number: ${catData.user_contact}</p>
-            `;
-
-            // 顯示 Modal
-            const modal = document.getElementById('catModal');
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        } catch (error) {
-            console.error('Error fetching cat details:', error);
-            alert('Unable to obtain cat information, please try again later');
+        function translateAge(age) {
+            if (age === -1) return 'Unknown';
+            if (age === -2) return '0~1';
+            if (age === -3) return '2~3';
+            if (age === -4) return '4~7';
+            return age;
         }
-    }
 
-    // 關閉 Modal
-    function closeModal() {
-        const modal = document.getElementById('catModal');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
+        async function openModal(catId, isGlobal) {
+            try {
+                // 獲取貓咪詳細信息
+                console.log(isGlobal);
+                if(isGlobal){
+                    const response = await fetch(`/api/globalcat/${catId}`);
+                    const catData = await response.json();
+                    
+                    var age = translateAge(catData.cat.age);
+                    
+                    var gender = catData.cat.gender;
+                    if(gender==-1) gender='Unknown';
+                    else if(gender==0) gender='Female';
+                    else gender='Male';
 
-    // 關閉按鈕
-    document.querySelector('.modal-close').addEventListener('click', closeModal);
+                    document.getElementById('modalCatName').textContent = catData.cat.name;
+                    document.getElementById('modalCatAge').textContent = `${age} year(s)`;
+                    document.getElementById('modalCatGender').textContent = gender;
 
-    // 綁定卡片上的按鈕
-    document.querySelectorAll('.card-button').forEach(button => {
-        button.addEventListener('click', () => {
-            const catId = button.dataset.catId;
-            openModal(catId);
+                    document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
+                    document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
+
+                    // 更新聯絡資訊
+                    document.querySelector('.contact-details').innerHTML = `
+                        <p>Link：<a href="${catData.link_contact}">${catData.src}</a></p>
+                    `;
+                    
+                }
+                else{
+                    const response = await fetch(`/api/cat/${catId}`);
+                    const catData = await response.json();
+
+                    var age = translateAge(catData.cat.age);
+                    
+                    var gender = catData.cat.gender;
+                    if(gender==-1) gender='Unknown';
+                    else if(gender==0) gender='Female';
+                    else gender='Male';
+
+                    // 更新 Modal 內容
+                    document.getElementById('modalCatName').textContent = catData.cat.name;
+                    document.getElementById('modalCatAge').textContent = `${age} year(s)`;
+                    document.getElementById('modalCatGender').textContent = gender;
+                    document.getElementById('modalCatHealth').textContent = catData.cat.health_status;
+                    document.getElementById('modalCatPersonality').textContent = catData.cat.personality;
+
+                    // 更新聯絡資訊
+                    document.querySelector('.contact-details').innerHTML = `
+                        <p>Name: ${catData.user_name}</p>
+                        <p>Contact Number: ${catData.user_contact}</p>
+                    `;
+                }
+
+                // 顯示 Modal
+                const modal = document.getElementById('catModal');
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            } catch (error) {
+                console.error('Error fetching cat details:', error);
+                alert('Unable to obtain cat information, please try again later');
+            }
+        }
+
+        // 關閉 Modal
+        function closeModal() {
+            const modal = document.getElementById('catModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 關閉按鈕
+        document.querySelector('.modal-close').addEventListener('click', closeModal);
+
+        // 綁定卡片上的按鈕
+        document.querySelectorAll('.card-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const catId = button.dataset.catId;
+                const isGlobal = button.dataset.isGlobal
+                openModal(catId, isGlobal);
+            });
         });
-    });
     </script>
 </body>
 </html>
