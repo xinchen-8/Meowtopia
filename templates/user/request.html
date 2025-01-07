@@ -15,6 +15,7 @@
             <img src="{{ url_for('static', filename='images/logo_user.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
             <img src="{{ url_for('static', filename='images/logo_text.png') }}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
         </a>
+        <h2 style="color: white;">Manage Request</h2>
         <nav class="auth-buttons">
             <a href="{{ url_for('logout') }}" class="auth-buttons">Logout</a>
         </nav>
@@ -52,7 +53,7 @@
                             </div>
                             <div class="form-fields">
                                 <div class="form-group">
-                                    <label>貓咪名字：</label>
+                                    <label>Cat's Name:</label>
                                     <input type="text" name="cat_name" required>
                                 </div>
                                 <div class="form-group">
