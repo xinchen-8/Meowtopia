@@ -110,7 +110,6 @@ def dashboard():
 
     globalcats = []    
     if page >= change_page:
-        print(page, per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0)
         globalcats = global_query.offset(
             per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0
         ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
@@ -205,7 +204,8 @@ def get_request_data(request_id):
     try:
         # 查找指定 ID 的請求資料，若找不到則返回 404
         request_cat = Request.query.get_or_404(request_id)
-        user = User.query.get(request_cat.user_id)  
+        user = User.query.get(request_cat.user_id)
+        
         request_data = {
             "cat": {
                 "name": request_cat.cat_name,
@@ -222,6 +222,7 @@ def get_request_data(request_id):
             'user_name': user.username,
             'user_contact': user.contact
         }
+        print(request_data)
         return jsonify(request_data)
     except Exception as e:
         print(f"Error occurred: {e}")  
@@ -267,7 +268,6 @@ def admin_cat_info():
 
     globalcats = []
     if page >= change_page:
-        print(page, per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0)
         globalcats = global_query.offset(
             per_page * (page - change_page - 1) + (per_page - offset) if page != change_page else 0
         ).limit(max(per_page - len(cats), 0)).all()  # 確保 globalcats 的數量不會超過 per_page
@@ -286,25 +286,21 @@ def admin_request_review():
         cat_age = request.form.get('cat_age')
         status = request.form.get('status')
         
-        # 根據表單數據建立查詢條件
         if cat_name:
             query = query.filter(Request.cat_name.ilike(f'%{cat_name}%'))  # 模糊查詢貓咪名字
         if cat_gender:
-            # 映射性別，假設 Male = 1, Female = 0
             gender_mapping = {'Male': 1, 'Female': 0}
             if cat_gender in gender_mapping:
                 query = query.filter(Request.cat_gender == gender_mapping[cat_gender])
         if cat_age:
-            query = query.filter(Request.cat_age == int(cat_age))  # 查詢年齡
+            query = query.filter(Request.cat_age == int(cat_age))  
         if status not in [None, ""]:  # 只有當status不是空時才過濾
-            query = query.filter(Request.status == int(status))  # 查詢狀態
-    print(query)  # 打印當前查詢語句進行調試
+            query = query.filter(Request.status == int(status))  
 
     # 獲取頁碼
-    page = request.args.get('page', 1, type=int)  # 頁碼默認為1
+    page = request.args.get('page', 1, type=int)  
     per_page = 10  # 每頁顯示10個項目
     
-    # 執行分頁查詢
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     
     for req in pagination.items:
@@ -314,6 +310,44 @@ def admin_request_review():
     pageinfo = [pagination.page, pagination.pages]
     
     return render_template('admin/request_review.html', requests=pagination.items, pageinfo=pageinfo)
+
+# 管理員：更新申請狀態並根據條件新增貓咪
+@app.route('/api/updateRequestAndAddCat/<int:request_id>', methods=['POST'])
+@login_required
+def update_request_and_add_cat(request_id):
+    try:
+        # 從前端獲取請求的 JSON 數據
+        data = request.get_json()
+        new_status = data.get('status')
+
+        if new_status is None:
+            return jsonify({"error": "Status is required"}), 400
+
+        request_obj = Request.query.get_or_404(request_id)
+        
+        # 更新狀態
+        request_obj.status = int(new_status)
+        db.session.commit()
+
+        # 如果狀態更新為 1 (成功)，新增貓咪資料到 local_cats
+        if int(new_status) == 1:
+            new_cat = Cat(
+                name=request_obj.cat_name,
+                age=request_obj.cat_age,
+                gender=request_obj.cat_gender,
+                health_status=request_obj.cat_health_status,
+                personality=request_obj.cat_personality,
+                img=request_obj.img
+            )
+            db.session.add(new_cat)
+            db.session.commit()  # 提交新增貓咪
+            return jsonify({"message": "Status updated and cat added successfully!"}), 200
+
+        return jsonify({"message": "Status updated successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "An error occurred"}), 500
 
 @app.route('/api/refetch', methods=['GET'])
 def refetch():
@@ -328,28 +362,5 @@ def refetch():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Something went wrong."}), 500
 
-# 管理員：更新領養申請狀態
-@app.route('/api/updateRequestStatus/<int:request_id>', methods=['POST'])
-@login_required
-def update_request_status(request_id):
-    try:
-        # 獲取請求的 JSON 數據
-        data = request.get_json()
-        new_status = data.get('status')
-
-        if new_status is None:
-            return jsonify({"error": "Status is required"}), 400
-
-        # 查找對應的請求
-        request_obj = Request.query.get_or_404(request_id)
-        request_obj.status = int(new_status)  # 更新狀態
-
-        # 保存更改
-        db.session.commit()
-        return jsonify({"message": "Status updated successfully"})
-    except Exception as e:
-        print(f"Error updating status: {e}")
-        return jsonify({"error": "An error occurred"}), 500
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5000, debug=True)

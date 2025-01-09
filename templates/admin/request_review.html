@@ -225,16 +225,17 @@
         // 綁定按鈕點擊事件
         document.querySelectorAll('.modal-button').forEach(button => {
             button.addEventListener('click', async (event) => {
-                const newStatus = event.target.dataset.status; 
-                const requestId = document.getElementById('modalFooter').dataset.requestId; 
-                
+                const newStatus = event.target.dataset.status;
+                const requestId = document.getElementById('modalFooter').dataset.requestId;
+
                 if (!requestId) {
                     alert("Invalid request ID");
                     return;
                 }
 
                 try {
-                    const response = await fetch(`/api/updateRequestStatus/${requestId}`, {
+                    // 發送更新狀態並新增貓咪的請求
+                    const response = await fetch(`/api/updateRequestAndAddCat/${requestId}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -245,12 +246,15 @@
                     const result = await response.json();
 
                     if (response.ok) {
-                        alert("Status updated successfully!");
-                        // 刷新頁面
-                        location.reload(); 
+                        if (newStatus === "1") {
+                            alert("Status updated and cat added successfully!");
+                        } else {
+                            alert("Status updated successfully!");
+                        }
+                        location.reload(); // 刷新頁面
                     } else {
-                        console.error("Error updating status:", result.error);
-                        alert("Failed to update status. Please try again.");
+                        console.error("Error:", result.error);
+                        alert("Failed to update status or add cat. Please try again.");
                     }
                 } catch (error) {
                     console.error("Error sending request:", error);
@@ -258,6 +262,8 @@
                 }
             });
         });
+
+
         // 根據狀態代碼返回對應的狀態文本
         function getStatusText(statusCode) {
             const statusTexts = {

@@ -456,6 +456,7 @@ body.modal-open {
     align-items: center; 
     gap: 10px;    
     padding: 20px;
+    z-index: 100;
 }
 .modal-button {
     padding: 12px 24px;

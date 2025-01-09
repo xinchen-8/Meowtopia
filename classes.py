@@ -10,8 +10,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 # 配置數據庫連接
-app.config['SECRET_KEY'] = 'Jin_xin0816' # meowtopia
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
+app.config['SECRET_KEY'] = 'Jin_xin0816'
+app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:Jin_xin0816@localhost/Meowtopia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -66,10 +66,10 @@ class Cat(db.Model):
     health_status = db.Column(db.String(300))                                  # 健康狀況
     personality = db.Column(db.String(300))                                    # 性格特點
     img =  db.Column(db.String(300))                                    # 存儲照片的二進制數據
-
+    requests_id = db.relationship('Request', backref='cat', lazy=True)
     # 定義與用戶表的關聯
     user = db.relationship('User', backref=db.backref('local_cats', lazy=True))
-
+    
 class GlobalCat(db.Model):
     __tablename__ = 'global_cats'
     id = db.Column(db.Integer, primary_key=True)
@@ -98,7 +98,8 @@ class Request(db.Model):
     status = db.Column(db.SmallInteger, default=0)  # 申請狀態：-1審核失敗，0等待審核，1等待領養，2領養申請中，3領養成功
     special_hint = db.Column(db.String(255))  # 特殊提示：未通過時使用這裡告知未通過原因
     adopter_id = db.Column(db.Integer, db.ForeignKey('users.id'))  # 領養者
-
+    cat_id = db.Column(db.Integer, db.ForeignKey('local_cats.id'), nullable=False)  # 外鍵
+    
     def get_status_class(self):
         status_classes = {
             -1: "failed",
